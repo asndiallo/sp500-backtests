@@ -1,0 +1,66 @@
+id = "cadence"
+title = "Contribution cadence: monthly DCA and annual lump sum vs quarterly DCA"
+description = """
+Same #1 picker, rules, index leg and valuation date as top1_core; only the contribution
+schedule changes. Normalisation: every schedule puts $2,000 per leg per year to work.
+* monthly: $166.666... (= 2000/12) on every month start (freq MS)
+* lump sum: $2,000 on every January 1 (freq YS)
+* reference: top1_core's quarterly $500 (freq QS), read from results/top1_core/runs.csv
+Rules are checked on the SAME quarterly schedule in every cadence (check_freq = QS), so the
+comparison isolates contribution timing; a monthly-check sensitivity is also run.
+Last contributions: quarterly and monthly on 2026-01-01, lump sum on 2026-01-01 ($2,000).
+Totals invested per leg 1975-2026: quarterly $102,500 (205 x $500), monthly $102,166.67
+(613 x $166.67), lump sum $104,000 (52 x $2,000). XIRR is on actual dated flows, so the
+small differences in total do not bias the comparison.
+"""
+
+[defaults]
+picker = "top1"
+group = "cadence"
+outputs = { events = false }
+check_freq = "QS"
+
+[[runs]]
+id = "monthly_{rule}"
+start = "1975-01-01"
+freq = "MS"
+contrib = 166.66666666666666
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "monthly_{rule}_from_1995"
+start = "1995-01-01"
+freq = "MS"
+contrib = 166.66666666666666
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "lump_sum_{rule}"
+start = "1975-01-01"
+freq = "YS"
+contrib = 2000.0
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "lump_sum_{rule}_from_1995"
+start = "1995-01-01"
+freq = "YS"
+contrib = 2000.0
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+# sensitivity: monthly contributions AND monthly rule checks
+[[runs]]
+id = "monthly_checks_{rule}"
+start = "1975-01-01"
+freq = "MS"
+check_freq = "MS"
+contrib = 166.66666666666666
+rules = [{ name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "monthly_checks_{rule}_from_1995"
+start = "1995-01-01"
+freq = "MS"
+check_freq = "MS"
+contrib = 166.66666666666666
+rules = [{ name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
