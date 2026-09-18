@@ -35,6 +35,7 @@ Every scenario ever run is listed in [`scenarios/index.csv`](scenarios/index.csv
 | `data_sensitivity`, `corp_action_sensitivity` | Confidence grades, pre-1996 data, AT&T 1984 breakup treatment | [reports/sensitivities.md](reports/sensitivities.md) |
 | `random_pick_placebo` | 1,000 random top-10 picks per quarter vs the #1 (2006–2026): the #1 ranks at the 80th percentile | [reports/random_pick_placebo.md](reports/random_pick_placebo.md) |
 | `tax_drag` | Capital-gains tax on realizations (illustrative 15%/32% and 23.8%/40.8%), before and after liquidation: ranking unchanged | [reports/tax_drag.md](reports/tax_drag.md) |
+| `rolling_windows` | #1 minus index XIRR for all 435 10/15/20-year windows: regime-driven, not converging to a tie | [reports/rolling_windows.md](reports/rolling_windows.md) |
 | — | Phase 1 table corrections, known gaps, data caveats | [reports/methodology.md](reports/methodology.md) |
 
 ## Reproduce

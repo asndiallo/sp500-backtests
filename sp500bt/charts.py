@@ -178,3 +178,27 @@ def placebo_histogram(sims: pd.DataFrame, stats: dict, refs: list[dict], path: P
     ax.legend(fontsize=8, loc="upper right")
     ax.grid(alpha=0.3)
     _save(fig, path)
+
+
+ROLLING_COLORS = {10: "#8c564b", 15: "#1f77b4", 20: "#17becf"}
+
+
+def rolling_spread(w: pd.DataFrame, lengths: list[int], lag: float, era_split: str, path: Path):
+    """#1-minus-index XIRR spread by window start date, one line per window length."""
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.axhspan(-lag, 0.0, color="#f2dede", alpha=0.35, lw=0)
+    ax.axhline(0, color="black", lw=1)
+    ax.axhline(-lag, color="#a94442", lw=0.8, ls=":")
+    ax.axvline(pd.Timestamp(era_split), color="#777777", lw=1, ls="--")
+    for L in lengths:
+        g = w[w.length_years == L]
+        ax.plot(pd.to_datetime(g.start), g.spread, color=ROLLING_COLORS.get(L), lw=1.6,
+                label=f"{L}-year windows (mean {g.spread.mean():+.2%}, #1 beat index in {(g.spread > 0).mean():.0%})")
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
+    ax.set_xlabel("window start date (quarterly)")
+    ax.set_ylabel("#1 stock-leg XIRR − index-leg XIRR")
+    ax.set_title("Rolling windows, baseline hold: does the #1 beat the index? (dotted line: lag of "
+                 f"{lag:.0%}; dashed: {era_split[:4]})")
+    ax.grid(alpha=0.3)
+    ax.legend(fontsize=9, loc="lower right")
+    _save(fig, path)

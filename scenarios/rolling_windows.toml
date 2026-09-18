@@ -1,0 +1,19 @@
+id = "rolling_windows"
+title = "Rolling-window robustness of the #1-vs-index spread (baseline hold)"
+description = """
+Fresh baseline-hold DCA runs for every 10-, 15- and 20-year window starting at each
+quarter from 1975-01-01 and ending by 2026-01-01 (valued at the close before the
+window's anniversary). Spread = #1 stock-leg XIRR minus index-leg XIRR. Overlapping
+windows share most quarters: they are not independent observations.
+"""
+
+[[analyses]]
+name = "rolling_windows"
+[analyses.params]
+lengths = [10, 15, 20]
+first_start = "1975-01-01"
+last_end = "2026-01-01"       # a window of length L starts no later than last_end - L
+picker = "top1"
+rule = "baseline_hold"
+era_split = "1996-01-01"      # summary split: windows starting before/after the estimate era
+lag_threshold = 0.02          # "lagged by more than 2pp"

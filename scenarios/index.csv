@@ -5,3 +5,4 @@ data_sensitivity,"LOW rows -> alternate pick; confidence gates; pre-1996 picks -
 corp_action_sensitivity,"AT&T 1984 breakup: sold at divestiture; US West written off",1975-01-01..2026-01-02,2026-09-18,done,results/corp_action_sensitivity/,reports/sensitivities.md
 random_pick_placebo,"1,000 random single-stock picks from each quarter's top-10 (baseline hold); where the #1 ranks",2006-04-01..2026-01-02,2026-09-18,done,results/random_pick_placebo/,reports/random_pick_placebo.md
 tax_drag,"Capital-gains tax on realizations (15%/32% illustrative; 23.8%/40.8% sensitivity), before and after final liquidation",1975-01-01..2026-01-02 and 1995-01-01..2026-01-02,2026-09-18,done,results/tax_drag/,reports/tax_drag.md
+rolling_windows,"#1 minus index XIRR for every 10/15/20-year window (quarterly starts), baseline hold",1975-01-01..2026-01-01 (435 windows),2026-09-18,done,results/rolling_windows/,reports/rolling_windows.md

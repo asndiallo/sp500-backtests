@@ -201,3 +201,44 @@ def tax_comparison(ctx, pretax_family: str, pairs: list[list[str]], file: str = 
     for (start, lt), g in df.groupby(["start", "lt_rate"]):
         print(f"  {start} lt={lt:.1%}: pre-tax {order(g, 'pretax_strategy_xirr')} | "
               f"after liquidation {order(g, 'strategy_xirr_after_liquidation')}")
+
+
+@analysis("rolling_windows")
+def rolling_windows(ctx, lengths: list[int], first_start: str, last_end: str,
+                    picker: str | dict = "top1", rule: str | dict = "baseline_hold",
+                    era_split: str = "1996-01-01", lag_threshold: float = 0.02):
+    """For each window length L (years) and each quarter-start date s with s + L <= last_end, run a
+    fresh DCA from s valued at the close before s + L; record (strategy XIRR - index XIRR)."""
+    from .engine import simulate
+    from .registry import PICKERS, RULES, build
+    from .report import summarize
+
+    rows = []
+    for L in lengths:
+        for s in pd.date_range(first_start, pd.Timestamp(last_end) - pd.DateOffset(years=L), freq="QS"):
+            end = s + pd.DateOffset(years=L) - pd.Timedelta(days=1)
+            res = simulate(build(PICKERS, picker, "picker"), build(RULES, rule, "rule"), ctx.holdings,
+                           ctx.corp_actions, start=s, end=end, prices=ctx.prices)
+            m = summarize(res)
+            rows.append({"length_years": L, "start": s.date(), "valued_at": end.date(),
+                         "contributions": m["contributions"], "strategy_xirr": m["strategy_xirr"],
+                         "index_xirr": m["index_xirr"], "spread": m["strategy_xirr"] - m["index_xirr"]})
+        print(f"  {L}-year windows done ({sum(r['length_years'] == L for r in rows)})")
+    w = pd.DataFrame(rows)
+    w.to_csv(ctx.family.results_dir / "windows.csv", index=False)
+    era = pd.to_datetime(w.start) >= pd.Timestamp(era_split)
+    groups = [("all", w)] + [(f"start < {era_split}", w[~era]), (f"start >= {era_split}", w[era])]
+    summ = []
+    for L in lengths:
+        for name, g in groups:
+            g = g[g.length_years == L]
+            if g.empty:
+                continue
+            summ.append({"length_years": L, "starts": name, "windows": len(g), "mean_spread": g.spread.mean(),
+                         "median_spread": g.spread.median(), "min_spread": g.spread.min(), "max_spread": g.spread.max(),
+                         "share_beat_index": float((g.spread > 0).mean()),
+                         f"share_lagged_by_more_than_{lag_threshold:.0%}": float((g.spread < -lag_threshold).mean()),
+                         "share_within_1pp": float((g.spread.abs() <= 0.01).mean())})
+    pd.DataFrame(summ).to_csv(ctx.family.results_dir / "summary.csv", index=False)
+    ctx.family.charts_dir.mkdir(parents=True, exist_ok=True)
+    charts.rolling_spread(w, lengths, lag_threshold, era_split, ctx.family.charts_dir / "spread_by_start.png")
