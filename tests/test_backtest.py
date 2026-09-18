@@ -14,6 +14,7 @@ from sp500bt.corporate_actions import load_corporate_actions  # noqa: E402
 from sp500bt.engine import RULES, PriceBook, contribution_dates, simulate  # noqa: E402
 from sp500bt.holdings import load_top_holdings, row_on, top1_picker  # noqa: E402
 from sp500bt.metrics import xirr  # noqa: E402
+from sp500bt.timeseries import daily_values, subset_since  # noqa: E402
 
 PX = PriceBook()
 END = pd.Timestamp("2026-01-02")
@@ -71,6 +72,18 @@ def test_index_leg_is_pure_dca():
     res = simulate(top1_picker, RULES["baseline_hold"], h, load_corporate_actions(), prices=PX)
     expect = sum(500 * PX.tr("SPX_TR", END) / PX.tr("SPX_TR", d) for d in contribution_dates())
     assert abs(res.final["index_leg_value"] / expect - 1) < 1e-9
+
+
+def test_fresh_window_equals_subset_of_full_run():
+    """A fresh 1995 start must equal the 1975 run's lots bought from 1995 (rules act per lot),
+    and the daily replay must land on the engine's final mark (asserted inside daily_values)."""
+    h, ca = load_top_holdings(), load_corporate_actions()
+    for rule in ("trailing_stop_25", "buy_the_dip_25_50"):
+        fresh = simulate(top1_picker, RULES[rule], h, ca, start="1995-01-01", prices=PX)
+        full = simulate(top1_picker, RULES[rule], h, ca, prices=PX)
+        sub = subset_since(full, "1995-01-01", PX)
+        assert abs(fresh.final["strategy_value"] / sub["strategy_value"] - 1) < 1e-9
+        daily_values(fresh, "1995-01-01")
 
 
 if __name__ == "__main__":

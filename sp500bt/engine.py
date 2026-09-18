@@ -112,9 +112,10 @@ class SimResult:
     index_units: dict            # origin -> units of the index series
     ledger: pd.DataFrame         # external cashflows: date, leg, amount (positive = money in)
     valuations: pd.DataFrame     # per contribution date + final valuation date
-    events: pd.DataFrame         # corporate actions / rule actions that fired
+    events: pd.DataFrame         # corporate actions / rule actions that fired (+ origin_date of the lot)
     end: pd.Timestamp
     final: dict
+    positions: pd.DataFrame      # every share change: date, symbol, shares, leg ("strategy" | "index_leg")
 
     def xirr(self, leg: str | None = None) -> float:
         """leg=None: whole portfolio; "stock": the #1-stock strategy leg (incl. index
@@ -148,10 +149,12 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
     end = pd.Timestamp(end)
     lots: list[Lot] = []
     index_units: dict[str, float] = {}
-    ledger, vals, fired = [], [], []
+    ledger, vals, fired, positions = [], [], [], []
 
     def to_index(amount, date, origin):
-        index_units[origin] = index_units.get(origin, 0.0) + amount / px.tr(index_ticker, date)
+        units = amount / px.tr(index_ticker, date)
+        index_units[origin] = index_units.get(origin, 0.0) + units
+        positions.append((date, index_ticker, units, "index_leg" if origin == "contribution" else "strategy"))
 
     def apply_corp_actions(date):
         new_lots = []
@@ -166,17 +169,18 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
                 value = lot.value(px.tr(lot.ticker, ev_date))
                 p_old_nom = px.nominal(lot.ticker, ev_date)
                 lot.closed = True
+                positions.append((ev_date, lot.ticker, -lot.shares, "strategy"))
                 for r in g.itertuples():
                     if r.mode == "cash":
                         proceeds = value * r.cash_per_share / p_old_nom
                         to_index(proceeds, ev_date, f"corp_action:{lot.origin_confidence}")
-                        fired.append((ev_date, lot.ticker, "cash", proceeds))
+                        fired.append((ev_date, lot.ticker, "cash", proceeds, lot.origin_date))
                         continue
                     if r.mode == "bankruptcy":
-                        fired.append((ev_date, lot.ticker, "bankruptcy", -value))
+                        fired.append((ev_date, lot.ticker, "bankruptcy", -value, lot.origin_date))
                         continue
                     if r.mode == "writeoff":  # sensitivity only: fraction ``ratio`` of value lost
-                        fired.append((ev_date, lot.ticker, "writeoff", -value * r.ratio))
+                        fired.append((ev_date, lot.ticker, "writeoff", -value * r.ratio, lot.origin_date))
                         continue
                     if r.mode == "stock":
                         mult = r.ratio * px.nominal(r.new_ticker, ev_date) / p_old_nom
@@ -190,7 +194,9 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
                                 dip_flags=set(lot.dip_flags), history=lot.history + [r.new_ticker])
                     child.purchase_date = ev_date  # later events of the child start after this one
                     new_lots.append(child)
-                    fired.append((ev_date, lot.ticker, f"{r.mode}->{r.new_ticker} (x{mult:.4f})", new_value))
+                    positions.append((ev_date, r.new_ticker, child.shares, "strategy"))
+                    fired.append((ev_date, lot.ticker, f"{r.mode}->{r.new_ticker} (x{mult:.4f})", new_value,
+                                  lot.origin_date))
         lots.extend(new_lots)
         if new_lots:  # children may themselves have later events (e.g. T_CORP -> T in 2005)
             apply_corp_actions(date)
@@ -206,18 +212,21 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
             if action == "sell_to_index":
                 to_index(lot.value(p), dt, f"stop_proceeds:{lot.origin_confidence}")
                 lot.closed = True
-                fired.append((dt, lot.ticker, "trailing_stop_sell", lot.value(p)))
+                positions.append((dt, lot.ticker, -lot.shares, "strategy"))
+                fired.append((dt, lot.ticker, "trailing_stop_sell", lot.value(p), lot.origin_date))
             elif action.startswith("add_"):
                 amt = add_amount if add_amount is not None else lot.base_amount
                 lots.append(Lot(lot.ticker, amt / p, dt, p, lot.origin_confidence, lot.origin_date, "dip_add", amt))
+                positions.append((dt, lot.ticker, amt / p, "strategy"))
                 ledger.append((dt, "stock_dip_add", amt))
-                fired.append((dt, lot.ticker, action, amt))
+                fired.append((dt, lot.ticker, action, amt, lot.origin_date))
         # 2) new contributions
         row, picks = picker(dt, holdings)
         for ticker, w in picks:
             p = px.tr(ticker, dt)
             lots.append(Lot(ticker, contrib * w / p, dt, p, row["confidence"], pd.Timestamp(row["date"]),
                             base_amount=contrib * w))
+            positions.append((dt, ticker, contrib * w / p, "strategy"))
         ledger.append((dt, "stock", contrib))
         to_index(contrib, dt, "contribution")
         ledger.append((dt, "index", contrib))
@@ -228,7 +237,8 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
     vals.append(final)
     return SimResult(lots, index_units, pd.DataFrame(ledger, columns=["date", "leg", "amount"]),
                      pd.DataFrame(vals).set_index("date"),
-                     pd.DataFrame(fired, columns=["date", "ticker", "action", "amount"]), end, final)
+                     pd.DataFrame(fired, columns=["date", "ticker", "action", "amount", "origin_date"]), end, final,
+                     pd.DataFrame(positions, columns=["date", "symbol", "shares", "leg"]))
 
 
 def _mark(date, lots, index_units, px, index_ticker) -> dict:

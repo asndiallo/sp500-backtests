@@ -12,7 +12,7 @@ def summarize(res: SimResult, name: str = "scenario", **meta) -> dict:
     index_in = led.get("index", 0.0)
     ev = res.events
     return {
-        **meta, "scenario": name, "valued_at": res.end.date(),
+        "scenario": name, **meta, "valued_at": res.end.date(),
         "contributions": int((res.ledger.leg == "stock").sum()),
         "strategy_invested": stock_in, "dip_add_invested": led.get("stock_dip_add", 0.0),
         "index_invested": index_in, "total_invested": stock_in + index_in,

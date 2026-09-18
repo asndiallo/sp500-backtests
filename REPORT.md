@@ -5,8 +5,57 @@
 **Bottom line.**
 
 - **Buying and holding the #1 company underperformed the index:** 9.73% vs 11.87% XIRR, or $2.46M vs $5.51M from the same $102,500.
-- **The gap comes entirely from 1975–1995 picks.** Routing only the pre-1996 picks to the index makes the strategy match the index (11.88%). From 1996 on, the #1 roughly ties it (10.85% vs 10.66%).
+- **The gap comes entirely from 1975–1995 picks.** Routing only the pre-1996 picks to the index makes the strategy match the index (11.88%). A fresh backtest started on 1995-01-01 confirms it: the #1 stock leg ties the index (10.66% vs 10.68%), and both active rules beat it (see the cross-window comparison below).
 - **The conclusion rests on the least certain part of the data, but not on the ambiguous rows within it.** Swapping every LOW-confidence pick for its runner-up moves the result by only −0.04 pp. What drives it is IBM's 1987–93 collapse and the AT&T breakup, not uncertainty about who was #1.
+
+## Cross-window comparison: 1975–2026 vs 1995–2026
+
+**What the 1995–2026 rows are.** They are **new, independent backtests**, not a checkpoint or slice of the 1975 run. Each starts with $0 on 1995-01-01, adds $500/quarter to each leg from 1995-01-01, uses the same picker, table and rules, and is valued at the 2026-01-02 close. The 1975–2026 rows and the top-10 row are read from `results/scenarios.csv`. `scripts/compare_windows.py` re-simulates them only to draw the charts, and asserts that the re-runs reproduce the stored numbers exactly.
+
+| Scenario                           | Window                          | Stock-leg invested | Stock-leg final | Stock-leg XIRR | Index-leg invested | Index-leg final | Index-leg XIRR | Combined final | Combined XIRR |
+| ---------------------------------- | ------------------------------- | -----------------: | --------------: | -------------: | -----------------: | --------------: | -------------: | -------------: | ------------: |
+| Baseline hold                      | 1975–2026                       |           $102,500 |      $2,460,375 |          9.73% |           $102,500 |      $5,508,523 |         11.87% |     $7,968,898 |        11.02% |
+| 25% trailing stop → index          | 1975–2026                       |           $102,500 |      $5,200,079 |         11.72% |           $102,500 |      $5,508,523 |         11.87% |    $10,708,602 |        11.80% |
+| Buy the dip −25%/−50%              | 1975–2026                       |           $270,500 |      $5,565,832 |         10.28% |           $102,500 |      $5,508,523 |         11.87% |    $11,074,355 |        11.00% |
+| Baseline hold                      | 1995–2026                       |            $62,500 |        $442,341 |         10.66% |            $62,500 |        $444,487 |         10.68% |       $886,828 |        10.67% |
+| 25% trailing stop → index          | 1995–2026                       |            $62,500 |        $488,826 |         11.14% |            $62,500 |        $444,487 |         10.68% |       $933,313 |        10.92% |
+| Buy the dip −25%/−50%              | 1995–2026                       |           $150,500 |      $1,078,642 |         11.30% |            $62,500 |        $444,487 |         10.68% |     $1,523,129 |        11.10% |
+| Top-10 equal-weight, baseline hold | **2006–2026 (from 2006-04-01)** |            $40,000 |        $207,746 |         14.67% |            $40,000 |        $178,311 |         13.41% |       $386,057 |        14.07% |
+
+Same table: `results/scenario_comparison.csv`. The buy-the-dip "invested" figures include its top-ups, $168,000 over 1975–2026 and $88,000 over 1995–2026.
+
+> **The top-10 row runs on a different window (2006-04-01 → 2026-01-02, the only period with complete top-10 lists).** Its 14.67% XIRR is not comparable with the 1995–2026 top-1 rows. 2006–2026 was a stronger market (index leg 13.41% vs 10.68%), so compare the top-10 row only with its own index leg.
+
+**Does restricting to 1995–2026 close the gap? Yes, for buy-and-hold.** Measured directly rather than assumed from the 1975 result, the fresh 1995 run's #1 stock leg earned 10.66% vs 10.68% for the index: $442,341 vs $444,487 on the same $62,500. That's a 0.02-point shortfall, compared with 2.14 points over 1975–2026. Both active rules come out ahead of the index in this window: trailing stop +0.46 points, buy-the-dip +0.62 points on its larger capital. How closely the tie holds depends on the start year. An earlier 1996-01-01 start (sensitivity table below) gave 10.85% vs 10.66%. The difference is the four 1995 contributions, all into GE, which grew 12.5–16.0× by 2026 vs 20.4–26.5× for the index. That's about $17.7k less on $2,000 invested, which is enough to cancel the #1 pick's edge from 1996 on. So the honest reading is that from the mid-1990s the #1 pick was roughly index-like: not a reliable winner, not a loser.
+
+**Cross-check against the full-period run (no silent trust in either number).** Rules act on each lot independently. A fresh 1995 run should therefore equal exactly the subset of the 1975 run made up of lots first bought on or after 1995-01-01, plus the index units bought with those lots' stop/deal proceeds (`results/window_reconciliation.csv`):
+
+| Rule              | Fresh 1995 stock-leg final | 1975 run, lots bought from 1995 |     Rule events (fresh / same lots in 1975 run) | Extra events in 1975 run after 1995, from pre-1995 lots |
+| ----------------- | -------------------------: | ------------------------------: | ----------------------------------------------: | ------------------------------------------------------: |
+| Baseline hold     |                $442,341.39 |                     $442,341.39 |                                           0 / 0 |   36 (corporate-action conversions of the AT&T lineage) |
+| 25% trailing stop |                $488,825.73 |                     $488,825.73 | 110 / 110, identical dates, tickers and actions |                                                      49 |
+| Buy the dip       |              $1,078,641.79 |                   $1,078,641.79 |                            176 / 176, identical |                                                     222 |
+
+Picks and triggers are identical over the overlap; invested amounts and index legs also match to the cent. A 1995 slice of the 1975 run is **not** the same as a fresh start, because its pre-1995 lots keep firing after 1995. That's the "extra events" column; those events belong to the 1975 run only.
+
+### Charts
+
+Colors are fixed across all charts: blue = baseline hold, orange = 25% trailing stop, green = buy the dip, black dashed = index leg, purple = top-10.
+
+![Growth of $500/quarter, 1995–2026](charts/growth_1995_2026.png)
+_Figure 1: Fresh 1995–2026 DCA (log scale). Baseline hold finishes level with the index ($442k vs $444k): it led the index every day from 1996 through 2007, then trailed it from 2008 onward as GE and Exxon lots lagged; the trailing stop ends slightly above it; buy-the-dip ends highest because it also invested more._
+
+![Growth of $500/quarter, 1975–2026](charts/growth_1975_2026.png)
+_Figure 2: The same scenarios over 1975–2026. Baseline hold falls behind during IBM's 1987–93 slide and never catches up; the trailing stop converges onto the index line as its stops move lots into the index._
+
+![Drawdown from peak, 1995–2026](charts/drawdown_1995_2026.png)
+_Figure 3: Drawdown of each leg's time-weighted unit value (contributions stripped out) with the rule triggers below. The trailing stop cuts the 2009 trough from −76% to −53%; buy-the-dip deepens it slightly (−77%) and recovers faster afterwards._
+
+![XIRR by rule and window](charts/xirr_by_window.png)
+_Figure 4: Stock-leg XIRR by rule. Solid = 1975–2026, hatched = 1995–2026, black marker = the index leg over the same window. The baseline's shortfall (solid blue under its marker) disappears in the hatched bar; the top-10 panel is on its own window._
+
+![When the rules fired, 1995–2026](charts/rule_events_1995_2026.png)
+_Figure 5: Where the trailing-stop sales (▼) and dip top-ups (▲) fired, and lots affected per year. Activity clusters in 2000–02, 2008–10 and 2019–23; the rules sat idle for years at a time._
 
 ## Results
 
@@ -128,5 +177,6 @@ python scripts/build_manual_prices.py  # T_OLD, T_CORP, SPX_TR
 python scripts/build_top_table.py      # Phase 1 table + transitions
 python scripts/check_prices.py         # Phase 3 sanity checks
 python scripts/run_scenarios.py        # Phase 4 results
+python scripts/compare_windows.py      # fresh 1995-2026 runs, comparison table, reconciliation, charts/
 python tests/test_backtest.py          # engine reconciles to a closed-form valuation to 1e-9
 ```
