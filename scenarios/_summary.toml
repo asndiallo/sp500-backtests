@@ -48,3 +48,118 @@ window = "2006–2026 (from 2006-04-01)"
 rule = "top10"
 family = "top10_ew"
 run = "top10_ew_baseline_hold"
+
+# Extended comparison (results/extended_comparison.csv): one row per key variant from the
+# scenario families added after the headline table. Each row carries its own window; compare a
+# row only with its own index leg and with the reference row of the same section.
+[[extended]]
+section = "Pickers"
+label = "#1 (reference)"
+window = "1975–2026"
+family = "top1_core"
+run = "top1_baseline_hold"
+
+[[extended]]
+section = "Pickers"
+label = "#1 with a 5% margin buffer"
+window = "1975–2026"
+family = "alt_pickers"
+run = "buffer5_baseline_hold"
+
+[[extended]]
+section = "Pickers"
+label = "#2 (runner-up)"
+window = "1975–2026"
+family = "alt_pickers"
+run = "rank2_baseline_hold"
+
+[[extended]]
+section = "Pickers"
+label = "#2 (runner-up)"
+window = "1995–2026"
+family = "alt_pickers"
+run = "rank2_baseline_hold_from_1995"
+
+[[extended]]
+section = "Pickers"
+label = "#1 (reference)"
+window = "2012–2026"
+family = "fundamentals_picker"
+run = "top1_baseline_hold_from_2012"
+
+[[extended]]
+section = "Pickers"
+label = "Best growth + margin rank in the top 10"
+window = "2012–2026"
+family = "fundamentals_picker"
+run = "fundamental_baseline_hold"
+
+[[extended]]
+section = "Rules (#1)"
+label = "25% trailing stop (reference)"
+window = "1975–2026"
+family = "top1_core"
+run = "top1_trailing_stop_25"
+
+[[extended]]
+section = "Rules (#1)"
+label = "Partial trim: 50% at −25%, once per lot"
+window = "1975–2026"
+family = "rule_variants"
+run = "partial_trim_once"
+
+[[extended]]
+section = "Rules (#1)"
+label = "25% stop + rebuy on regaining #1"
+window = "1975–2026"
+family = "rule_variants"
+run = "stop_and_rebuy"
+
+[[extended]]
+section = "Rules (#1)"
+label = "Volatility-scaled stop (k = 1)"
+window = "1975–2026"
+family = "rule_variants"
+run = "vol_stop_k1"
+
+[[extended]]
+section = "Breadth (common window)"
+label = "#1"
+window = "2009–2026"
+family = "breadth"
+run = "ladder_top1_from_2009"
+
+[[extended]]
+section = "Breadth (common window)"
+label = "Top-3 equal-weight"
+window = "2009–2026"
+family = "breadth"
+run = "ladder_top3_from_2009"
+
+[[extended]]
+section = "Breadth (common window)"
+label = "Top-10 equal-weight"
+window = "2009–2026"
+family = "breadth"
+run = "ladder_top10_from_2009"
+
+[[extended]]
+section = "Breadth (common window)"
+label = "Top-20 equal-weight"
+window = "2009–2026"
+family = "breadth"
+run = "ladder_top20_from_2009"
+
+[[extended]]
+section = "Cadence (#1, baseline hold)"
+label = "Monthly $166.67"
+window = "1975–2026"
+family = "cadence"
+run = "monthly_baseline_hold"
+
+[[extended]]
+section = "Cadence (#1, baseline hold)"
+label = "Annual lump sum $2,000"
+window = "1975–2026"
+family = "cadence"
+run = "lump_sum_baseline_hold"

@@ -1,5 +1,5 @@
-"""Cross-family artifacts: results/scenario_comparison.csv, results/risk_metrics.csv
-and charts/summary/.
+"""Cross-family artifacts: results/scenario_comparison.csv, results/risk_metrics.csv,
+results/extended_comparison.csv and charts/summary/.
 
 Rows are declared in scenarios/_summary.toml and read from each family's
 results/<family>/runs.csv, so the summary never re-simulates anything.
@@ -21,6 +21,9 @@ RISK_COLUMNS = ["scenario", "window", "leg", "xirr", "twr_annualized", "volatili
                 "sortino", "max_drawdown", "max_dd_peak", "max_dd_trough", "max_dd_recovery", "underwater_days",
                 "periods", "first_period", "last_period"]
 LEG_XIRR = {"stock": "strategy_xirr", "index": "index_xirr", "combined": "total_xirr"}
+EXTENDED_COLUMNS = ["section", "scenario", "window", "stock_leg_invested", "stock_leg_final", "stock_leg_xirr",
+                    "index_leg_xirr", "spread_vs_index", "stock_sharpe", "index_sharpe", "stock_max_drawdown",
+                    "index_max_drawdown", "family", "run"]
 
 
 def _load_summary_config() -> dict:
@@ -62,6 +65,22 @@ def comparison_table() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def extended_table() -> pd.DataFrame:
+    """Key variants from the later scenario families, with risk alongside XIRR."""
+    rows = []
+    for spec in _load_summary_config().get("extended", []):
+        s = _runs(spec["family"]).loc[spec["run"]]
+        risk = _read(spec["family"], "risk.csv").set_index(["scenario", "leg"])
+        k, i = risk.loc[(spec["run"], "stock")], risk.loc[(spec["run"], "index")]
+        rows.append({"section": spec["section"], "scenario": spec["label"], "window": spec["window"],
+                     "stock_leg_invested": s.strategy_invested, "stock_leg_final": s.strategy_value,
+                     "stock_leg_xirr": s.strategy_xirr, "index_leg_xirr": s.index_xirr,
+                     "spread_vs_index": s.strategy_xirr - s.index_xirr, "stock_sharpe": k.sharpe,
+                     "index_sharpe": i.sharpe, "stock_max_drawdown": k.max_drawdown,
+                     "index_max_drawdown": i.max_drawdown, "family": spec["family"], "run": spec["run"]})
+    return pd.DataFrame(rows, columns=EXTENDED_COLUMNS)
+
+
 def build_summary(px: PriceBook | None = None) -> pd.DataFrame:
     table = comparison_table()
     table[COMPARISON_COLUMNS].to_csv(ROOT / "results" / "scenario_comparison.csv", index=False)
@@ -73,9 +92,12 @@ def build_summary(px: PriceBook | None = None) -> pd.DataFrame:
     all_risk = pd.concat([pd.read_csv(p).assign(family=p.parent.name)
                           for p in sorted((ROOT / "results").glob("*/risk.csv"))], ignore_index=True)
     all_risk.to_csv(ROOT / "results" / "all_risk.csv", index=False)
+    extended = extended_table()
+    extended.to_csv(ROOT / "results" / "extended_comparison.csv", index=False)
     out = ROOT / "charts" / "summary"
     out.mkdir(parents=True, exist_ok=True)
     charts.xirr_bars(table, out / "xirr_by_window.png")
     print(f"wrote results/scenario_comparison.csv ({len(table)} rows), risk_metrics.csv ({len(risk)} rows), "
-          f"all_runs.csv ({len(all_runs)} runs), all_risk.csv and charts/summary/")
+          f"extended_comparison.csv ({len(extended)} rows), all_runs.csv ({len(all_runs)} runs), all_risk.csv "
+          "and charts/summary/")
     return table
