@@ -1,0 +1,10 @@
+date,kind,context,source_url
+1982-01-08,structural,"AT&T settles the DOJ antitrust suit and agrees to divest the Bell operating companies; its #1 spell in 1981-82 is the pre-breakup Bell System, not a durable standalone franchise",https://www.upi.com/Archives/1982/01/08/Government-settles-with-ATT-drops-IBM-case/6476379314000/
+1984-01-01,structural,"Bell System divestiture effective: each old AT&T share -> 1 new AT&T Corp share + 0.1 share of each of 7 regional Bells (value split 28.67% / 71.33%)",https://bimajority.org/~wollman/t.html
+1994-09-19,structural,"AT&T Corp completes the McCaw Cellular acquisition in stock (~200M new shares); its 1994-Q3 #1 reading is acquisition-inflated",https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000005907&type=10-Q&dateb=19970101
+1998-09-04,intraday,"Microsoft briefly passes GE intraday; GE closes ahead ($245.7B vs $238.1B)",https://archive.seattletimes.com/archive/?date=19980905&slug=2770248
+1999-11-30,structural,"Exxon-Mobil merger closes (Exxon the acquirer; ticker XON -> XOM); all later XOM #1 spells rest on the merged entity",https://en.wikipedia.org/wiki/ExxonMobil
+2005-02-18,close,"ExxonMobil closes above GE ($383B vs ~$379B) on rising oil prices",https://www.nbcnews.com/news/amp/wbna6994181
+2011-08-09,intraday,"Apple passes Exxon intraday; Exxon closes ahead ($348B vs $347B); the two trade places repeatedly through 2011-Q3/Q4",https://www.washingtonpost.com/business/economy/apple-overtakes-exxon-mobil-as-most-valuable-company/2011/08/09/gIQACYWq4I_story.html
+2018-11-30,close,"Microsoft ends the day ahead of Apple ($851B) after Apple falls on iPhone-demand worries",https://www.cnbc.com/2018/11/30/microsoft-apple-end-trading-market-cap.html
+2024-06-18,close,"Nvidia closes at ~$3.34T, edging past Microsoft ($3.32T) on AI-chip demand",https://www.cnbc.com/2024/06/18/nvidia-passes-microsoft-in-market-cap-is-most-valuable-public-company.html

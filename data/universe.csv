@@ -1,0 +1,71 @@
+ticker,name,cmc_slug,price_symbol,sp500_added,aliases,continuity_note
+T_OLD,American Telephone & Telegraph (pre-divestiture),,T_OLD,1957-03-04,AT&T|American Telephone & Telegraph,"Ticker 'T' on the NYSE until 1983; NOT the Yahoo 'T' series (that is SBC/AT&T Inc from 1983-11-21). Priced from data/manual_prices/T_OLD.csv"
+T_CORP,AT&T Corp (post-divestiture),,T_CORP,1957-03-04,AT&T|AT&T Corp,"Traded as 'T' 1984-2005, acquired by SBC 2005-11-18; SBC then took the 'T' symbol -> TICKER REUSE. Priced from data/manual_prices/T_CORP.csv"
+IBM,IBM,ibm,IBM,1957-03-04,IBM|International Business Machines,Continuous since 1962 on Yahoo; Kyndryl spin (2021) encoded by Yahoo as a 1.046 pseudo-split
+XOM,Exxon / ExxonMobil,exxon-mobil,XOM,1957-03-04,Exxon|ExxonMobil|Exxon Mobil|Standard Oil (New Jersey),"Exxon traded as XON until the 1999-11-30 Mobil merger, then XOM. Yahoo XOM history is Exxon's (acquirer) -> continuous entity, no reuse"
+GE,General Electric (GE Aerospace),general-electric,GE,1957-03-04,General Electric|GE|GE Aerospace,Continuous; Yahoo encodes Wabtec (2019) GE HealthCare (2023) GE Vernova (2024) spins as pseudo-splits; 1:8 reverse split 2021
+MSFT,Microsoft,microsoft,MSFT,1994-06-01,Microsoft,Continuous since 1986 IPO
+AAPL,Apple,apple,AAPL,1982-11-30,Apple|Apple Inc.,Continuous
+NVDA,Nvidia,nvidia,NVDA,2001-11-30,Nvidia|NVIDIA,Continuous
+CSCO,Cisco Systems,cisco,CSCO,1993-12-01,Cisco|Cisco Systems,Continuous
+WMT,Walmart,walmart,WMT,1982-08-31,Wal-Mart|Walmart,Continuous
+MO,Altria (Philip Morris Cos.),altria-group,MO,1957-03-04,Altria|Philip Morris|Philip Morris Companies,"Continuous symbol; Kraft (2007) and PMI (2008) spin-offs are NOT pseudo-split-adjusted by Yahoo -> would need explicit corporate actions if MO were ever held"
+KO,Coca-Cola,coca-cola,KO,1957-03-04,Coca-Cola|The Coca-Cola Company,Continuous
+GOOGL,Alphabet (Google) class A,alphabet-google,GOOGL,2006-04-03,Alphabet|Google|Alphabet (Google),cmc series only from 2014-03; earlier caps computed from price x shares
+AMZN,Amazon,amazon,AMZN,2005-11-18,Amazon,Continuous
+META,Meta Platforms (Facebook),meta-platforms,META,2013-12-23,Meta|Facebook|Meta Platforms,Continuous
+BRK-B,Berkshire Hathaway,berkshire-hathaway,BRK-B,2010-02-16,Berkshire Hathaway,Not in S&P 500 before 2010-02-16
+TSLA,Tesla,tesla,TSLA,2020-12-21,Tesla,Not in S&P 500 before 2020-12-21
+AVGO,Broadcom,broadcom,AVGO,2014-05-08,Broadcom,
+LLY,Eli Lilly,eli-lilly,LLY,1970-12-31,Eli Lilly|Lilly,
+JPM,JPMorgan Chase,jp-morgan-chase,JPM,1975-06-30,JPMorgan Chase|JPMorgan,
+V,Visa,visa,V,2009-12-21,Visa,
+MA,Mastercard,mastercard,MA,2008-07-18,Mastercard,
+UNH,UnitedHealth,united-health,UNH,1994-07-01,UnitedHealth|UnitedHealth Group,
+JNJ,Johnson & Johnson,johnson-and-johnson,JNJ,1973-06-30,Johnson & Johnson,
+PG,Procter & Gamble,procter-and-gamble,PG,1957-03-04,Procter & Gamble,
+HD,Home Depot,home-depot,HD,1988-03-31,Home Depot,
+ORCL,Oracle,oracle,ORCL,1989-08-31,Oracle,
+PEP,PepsiCo,pepsico,PEP,1957-03-04,PepsiCo,
+INTC,Intel,intel,INTC,1976-12-31,Intel|Intel Corporation,
+PFE,Pfizer,pfizer,PFE,1957-03-04,Pfizer,
+MRK,Merck,merck,MRK,1957-03-04,Merck,
+C,Citigroup,citigroup,C,1988-05-31,Citigroup,
+BAC,Bank of America,bank-of-america,BAC,1976-06-30,Bank of America,
+WFC,Wells Fargo,wells-fargo,WFC,1976-06-30,Wells Fargo,
+CVX,Chevron,chevron,CVX,1957-03-04,Chevron|Chevron Corporation,
+T,AT&T Inc (SBC lineage),att,T,1983-11-30,AT&T Inc|SBC|SBC Communications,"Yahoo 'T' = Southwestern Bell/SBC history from 1983-11-21, renamed AT&T Inc 2005; distinct from T_OLD/T_CORP"
+VZ,Verizon (Bell Atlantic lineage),verizon,VZ,1983-11-30,Verizon|Bell Atlantic,Yahoo VZ = Bell Atlantic history from 1983-11-21
+PM,Philip Morris International,philip-morris,PM,2008-03-31,Philip Morris International,
+AIG,American International Group,aig,AIG,1980-03-31,American International Group|AIG,
+ABBV,AbbVie,abbvie,ABBV,2012-12-31,AbbVie,
+ABT,Abbott Laboratories,abbott-laboratories,ABT,1957-03-04,Abbott,
+AMGN,Amgen,amgen,AMGN,1992-01-02,Amgen,
+QCOM,Qualcomm,qualcomm,QCOM,1999-07-22,Qualcomm|QUALCOMM,
+HPQ,HP Inc (Hewlett-Packard),hp,HPQ,1974-12-31,Hewlett-Packard|HP,
+TXN,Texas Instruments,texas-instruments,TXN,2001-03-12,Texas Instruments,Wikipedia add date looks like a re-add; TI was an S&P member long before 2001 (not a top-10 name in-window)
+CMCSA,Comcast,comcast,CMCSA,2002-11-19,Comcast,
+COST,Costco,costco,COST,1993-10-01,Costco,
+NFLX,Netflix,netflix,NFLX,2010-12-20,Netflix,
+CRM,Salesforce,salesforce,CRM,2008-09-15,Salesforce,
+ADBE,Adobe,adobe,ADBE,1997-05-05,Adobe,
+TMO,Thermo Fisher,thermo-fisher-scientific,TMO,2004-08-03,Thermo Fisher,
+MCD,McDonald's,mcdonald,MCD,1970-06-30,McDonald's,
+DIS,Walt Disney,walt-disney,DIS,1976-06-30,Disney|Walt Disney,
+BA,Boeing,boeing,BA,1957-03-04,Boeing,
+MMM,3M,3m,MMM,1957-03-04,3M,
+CAT,Caterpillar,caterpillar,CAT,1957-03-04,Caterpillar,
+GS,Goldman Sachs,goldman-sachs,GS,2002-07-22,Goldman Sachs,
+MS,Morgan Stanley,morgan-stanley,MS,1993-07-29,Morgan Stanley,
+AXP,American Express,american-express,AXP,1976-06-30,American Express,
+HON,Honeywell,honeywell,HON,1957-03-04,Honeywell,
+NKE,Nike,nike,NKE,1988-11-30,Nike,
+SBUX,Starbucks,starbucks,SBUX,2000-06-07,Starbucks,
+TMUS,T-Mobile US,t-mobile-us,TMUS,2019-07-15,T-Mobile,
+PLTR,Palantir,palantir,PLTR,2024-09-23,Palantir,
+AMD,AMD,amd,AMD,2017-03-20,AMD,Wikipedia add date is the 2017 re-add
+SLB,Schlumberger,schlumberger,SLB,1957-03-04,Schlumberger|SLB,
+COP,ConocoPhillips,conocophillips,COP,1957-03-04,ConocoPhillips,
+MDT,Medtronic,medtronic,MDT,1986-10-31,Medtronic,
+UPS,United Parcel Service,ups,UPS,2002-07-22,UPS|United Parcel Service,
+BMY,Bristol-Myers Squibb,bristol-myers-squibb,BMY,1957-03-04,Bristol-Myers Squibb,

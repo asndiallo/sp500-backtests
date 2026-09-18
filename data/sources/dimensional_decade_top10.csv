@@ -1,0 +1,28 @@
+# Dimensional Fund Advisors, "Largest 10 US stocks at the start of each decade" (CRSP & Compustat, all US common stocks), Exhibit 2 of "Large and In Charge? Giant Firms atop Market Is Nothing New" (W. Crill, S&P DJI Indexology, 2020-10-27): https://www.spglobal.com/en/research-insights/market-insights/large-and-in-charge-giant-firms-atop-market-is-nothing-new . "Start of decade" read as the prior year-end. Only ranks legible from the chart are transcribed (colour-coded markers).
+year_end,rank,company,ticker
+1969,1,IBM,IBM
+1969,2,AT&T,T_OLD
+1979,1,IBM,IBM
+1979,2,AT&T,T_OLD
+1979,3,Exxon,XOM
+1989,1,Exxon,XOM
+1989,2,General Electric,GE
+1989,3,IBM,IBM
+1989,4,AT&T,T_CORP
+1989,5,Altria,MO
+1999,1,Microsoft,MSFT
+1999,2,General Electric,GE
+1999,3,Cisco,CSCO
+2009,1,Exxon,XOM
+2009,2,Microsoft,MSFT
+2009,3,Walmart,WMT
+2019,1,Apple,AAPL
+2019,2,Microsoft,MSFT
+2019,3,Amazon,AMZN
+2019,4,Google,GOOGL
+2019,5,Berkshire Hathaway,BRK-B
+2019,6,Facebook,META
+2019,7,JPMorgan,JPM
+2019,8,Johnson & Johnson,JNJ
+2019,9,Walmart,WMT
+2019,10,Visa,V

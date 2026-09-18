@@ -1,0 +1,49 @@
+effective_date,observed_at,from_ticker,to_ticker,confidence,reason,context_source_url,row_type
+1975-04-01,1975-03-31,T_OLD,IBM,MEDIUM,IBM price +23% vs T_OLD +12% over 1974-12-31..1975-03-31,,quarter_transition
+1977-07-01,1977-06-30,IBM,T_OLD,LOW,T_OLD price +1% vs IBM -5% over 1977-03-31..1977-06-30,,quarter_transition
+1978-01-01,1977-12-31,T_OLD,IBM,HIGH,IBM price +5% vs T_OLD -4% over 1977-09-30..1977-12-31,,quarter_transition
+1978-04-01,1978-03-31,IBM,T_OLD,MEDIUM,T_OLD price +2% vs IBM -14% over 1977-12-31..1978-03-31,,quarter_transition
+1979-01-01,1978-12-31,T_OLD,IBM,HIGH,IBM price +8% vs T_OLD -2% over 1978-09-30..1978-12-31,,quarter_transition
+1980-04-01,1980-03-31,IBM,T_OLD,MEDIUM,T_OLD price -8% vs IBM -13% over 1979-12-31..1980-03-31,,quarter_transition
+1981-01-01,1980-12-31,T_OLD,IBM,HIGH,IBM price +6% vs T_OLD -7% over 1980-09-30..1980-12-31,,quarter_transition
+1981-04-01,1981-03-31,IBM,T_OLD,MEDIUM,T_OLD price +7% vs IBM -8% over 1980-12-31..1981-03-31,,quarter_transition
+1982-01-08,1982-01-08,,,HIGH (dated news source),"AT&T settles the DOJ antitrust suit and agrees to divest the Bell operating companies; its #1 spell in 1981-82 is the pre-breakup Bell System, not a durable standalone franchise",https://www.upi.com/Archives/1982/01/08/Government-settles-with-ATT-drops-IBM-case/6476379314000/,documented_event:structural
+1983-01-01,1982-12-31,T_OLD,IBM,HIGH,IBM price +31% vs T_OLD +6% over 1982-09-30..1982-12-31,,quarter_transition
+1984-01-01,1984-01-01,,,HIGH (dated news source),Bell System divestiture effective: each old AT&T share -> 1 new AT&T Corp share + 0.1 share of each of 7 regional Bells (value split 28.67% / 71.33%),https://bimajority.org/~wollman/t.html,documented_event:structural
+1990-01-01,1989-12-31,IBM,XOM,HIGH,XOM price +12% vs IBM -14% over 1989-09-30..1989-12-31,,quarter_transition
+1990-04-01,1990-03-31,XOM,IBM,MEDIUM,IBM price +13% vs XOM -7% over 1989-12-31..1990-03-31,,quarter_transition
+1990-10-01,1990-09-30,IBM,XOM,LOW,XOM price +2% vs IBM -9% over 1990-06-30..1990-09-30,,quarter_transition
+1991-01-01,1990-12-31,XOM,IBM,LOW,IBM price +6% vs XOM +6% over 1990-09-30..1990-12-31,,quarter_transition
+1991-04-01,1991-03-31,IBM,XOM,MEDIUM,XOM price +13% vs IBM +1% over 1990-12-31..1991-03-31,,quarter_transition
+1993-07-01,1993-06-30,XOM,T_CORP,MEDIUM,T_CORP price +11% vs XOM +0% over 1993-03-31..1993-06-30,,quarter_transition
+1993-10-01,1993-09-30,T_CORP,GE,LOW,GE price +0% vs T_CORP -7% over 1993-06-30..1993-09-30,,quarter_transition
+1994-09-19,1994-09-19,,,HIGH (dated news source),AT&T Corp completes the McCaw Cellular acquisition in stock (~200M new shares); its 1994-Q3 #1 reading is acquisition-inflated,https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000005907&type=10-Q&dateb=19970101,documented_event:structural
+1994-10-01,1994-09-30,GE,T_CORP,LOW,T_CORP price -1% vs GE +3% over 1994-06-30..1994-09-30,,quarter_transition
+1995-01-01,1994-12-31,T_CORP,GE,HIGH,GE price +6% vs T_CORP -7% over 1994-09-30..1994-12-31,,quarter_transition
+1998-09-04,1998-09-04,,,HIGH (dated news source),Microsoft briefly passes GE intraday; GE closes ahead ($245.7B vs $238.1B),https://archive.seattletimes.com/archive/?date=19980905&slug=2770248,documented_event:intraday
+1998-10-01,1998-09-30,GE,MSFT,MEDIUM,MSFT price +2% vs GE -12% over 1998-06-30..1998-09-30; Microsoft briefly passes GE intraday; GE closes ahead ($245.7B vs $238.1B),https://archive.seattletimes.com/archive/?date=19980905&slug=2770248,quarter_transition
+1999-11-30,1999-11-30,,,HIGH (dated news source),Exxon-Mobil merger closes (Exxon the acquirer; ticker XON -> XOM); all later XOM #1 spells rest on the merged entity,https://en.wikipedia.org/wiki/ExxonMobil,documented_event:structural
+2000-07-01,2000-06-30,MSFT,GE,MEDIUM,GE price +2% vs MSFT -25% over 2000-03-31..2000-06-30,,quarter_transition
+2002-07-01,2002-06-30,GE,MSFT,MEDIUM,MSFT price -9% vs GE -22% over 2002-03-31..2002-06-30,,quarter_transition
+2002-10-01,2002-09-30,MSFT,GE,MEDIUM,GE price -15% vs MSFT -20% over 2002-06-30..2002-09-30,,quarter_transition
+2003-01-01,2002-12-31,GE,MSFT,HIGH,MSFT price +18% vs GE -1% over 2002-09-30..2002-12-31,,quarter_transition
+2003-07-01,2003-06-30,MSFT,GE,MEDIUM,GE price +12% vs MSFT +6% over 2003-03-31..2003-06-30,,quarter_transition
+2005-02-18,2005-02-18,,,HIGH (dated news source),ExxonMobil closes above GE ($383B vs ~$379B) on rising oil prices,https://www.nbcnews.com/news/amp/wbna6994181,documented_event:close
+2005-10-01,2005-09-30,GE,XOM,MEDIUM,XOM price +11% vs GE -3% over 2005-06-30..2005-09-30,,quarter_transition
+2006-01-01,2005-12-31,XOM,GE,HIGH,GE price +4% vs XOM -12% over 2005-09-30..2005-12-31,,quarter_transition
+2006-04-01,2006-03-31,GE,XOM,MEDIUM,XOM price +8% vs GE -1% over 2005-12-31..2006-03-31,,quarter_transition
+2011-08-09,2011-08-09,,,HIGH (dated news source),Apple passes Exxon intraday; Exxon closes ahead ($348B vs $347B); the two trade places repeatedly through 2011-Q3/Q4,https://www.washingtonpost.com/business/economy/apple-overtakes-exxon-mobil-as-most-valuable-company/2011/08/09/gIQACYWq4I_story.html,documented_event:intraday
+2011-10-01,2011-09-30,XOM,AAPL,MEDIUM,AAPL price +14% vs XOM -11% over 2011-06-30..2011-09-30; Apple passes Exxon intraday; Exxon closes ahead ($348B vs $347B); the two trade places repeatedly through 2011-Q3/Q4,https://www.washingtonpost.com/business/economy/apple-overtakes-exxon-mobil-as-most-valuable-company/2011/08/09/gIQACYWq4I_story.html,quarter_transition
+2012-01-01,2011-12-31,AAPL,XOM,HIGH,XOM price +17% vs AAPL +6% over 2011-09-30..2011-12-31,,quarter_transition
+2012-04-01,2012-03-31,XOM,AAPL,HIGH,AAPL price +48% vs XOM +2% over 2011-12-31..2012-03-31,,quarter_transition
+2013-07-01,2013-06-30,AAPL,XOM,HIGH,XOM price +0% vs AAPL -10% over 2013-03-31..2013-06-30,,quarter_transition
+2013-10-01,2013-09-30,XOM,AAPL,HIGH,AAPL price +20% vs XOM -5% over 2013-06-30..2013-09-30,,quarter_transition
+2018-11-30,2018-11-30,,,HIGH (dated news source),Microsoft ends the day ahead of Apple ($851B) after Apple falls on iPhone-demand worries,https://www.cnbc.com/2018/11/30/microsoft-apple-end-trading-market-cap.html,documented_event:close
+2019-01-01,2018-12-31,AAPL,MSFT,HIGH,MSFT price -11% vs AAPL -30% over 2018-09-30..2018-12-31; Microsoft ends the day ahead of Apple ($851B) after Apple falls on iPhone-demand worries,https://www.cnbc.com/2018/11/30/microsoft-apple-end-trading-market-cap.html,quarter_transition
+2020-01-01,2019-12-31,MSFT,AAPL,HIGH,AAPL price +31% vs MSFT +13% over 2019-09-30..2019-12-31,,quarter_transition
+2020-04-01,2020-03-31,AAPL,MSFT,HIGH,MSFT price +0% vs AAPL -13% over 2019-12-31..2020-03-31,,quarter_transition
+2020-07-01,2020-06-30,MSFT,AAPL,HIGH,AAPL price +43% vs MSFT +29% over 2020-03-31..2020-06-30,,quarter_transition
+2024-04-01,2024-03-31,AAPL,MSFT,HIGH,MSFT price +12% vs AAPL -11% over 2023-12-31..2024-03-31,,quarter_transition
+2024-06-18,2024-06-18,,,HIGH (dated news source),"Nvidia closes at ~$3.34T, edging past Microsoft ($3.32T) on AI-chip demand",https://www.cnbc.com/2024/06/18/nvidia-passes-microsoft-in-market-cap-is-most-valuable-public-company.html,documented_event:close
+2024-10-01,2024-09-30,MSFT,AAPL,HIGH,AAPL price +11% vs MSFT -4% over 2024-06-30..2024-09-30,,quarter_transition
+2025-07-01,2025-06-30,AAPL,NVDA,HIGH,NVDA price +46% vs AAPL -8% over 2025-03-31..2025-06-30,,quarter_transition

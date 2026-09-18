@@ -1,0 +1,28 @@
+old_ticker,event_date,mode,cash_per_share,new_ticker,ratio,notes,source_url
+T_OLD,1984-01-01,value_split,0.0,T_CORP,0.286743,"Bell System divestiture: new AT&T Corp keeps 1 share per old share; value fraction = IRS basis allocation 0.286743",https://www.kiplinger.com/article/investing/t056-c001-s001-figuring-the-basis-of-at-amp-t-shares.html
+T_OLD,1984-01-01,value_split,0.0,T,0.463695,"Regional Bells whose value ended up in AT&T Inc (Yahoo 'T' = Southwestern Bell/SBC from 1983-11-21): Southwestern Bell 0.095481 (exact successor) + Ameritech 0.103988 (->SBC 1999, 1.316 SBC/sh) + Pacific Telesis 0.083073 (->SBC 1997, 0.733) + BellSouth 0.136165 (->AT&T Inc 2006, 1.325) + half of US West 0.044988 (PROXY). Pre-merger returns of Ameritech/PacTel/BellSouth proxied by SBC",https://bimajority.org/~wollman/t.html
+T_OLD,1984-01-01,value_split,0.0,VZ,0.249561,"Regional Bells whose value ended up in Verizon (Yahoo 'VZ' = Bell Atlantic from 1983-11-21): Bell Atlantic 0.105539 (exact) + NYNEX 0.099034 (->Bell Atlantic 1997, 0.768 BEL/sh; pre-merger proxied by Bell Atlantic) + half of US West 0.044988 (PROXY)",https://bimajority.org/~wollman/t.html
+T_CORP,2005-11-18,stock,0.0,T,0.77942,"SBC Communications acquires AT&T Corp, 0.77942 SBC per T; SBC renames itself AT&T Inc and takes the 'T' symbol (ticker reuse)",https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/
+T_CORP,2005-11-18,cash,1.3,,0.0,"$1.30 special dividend paid by AT&T Corp on the merger closing date as part of the consideration (stock part 0.77942 SBC); cash goes to the index leg per framework convention",https://www.sec.gov/Archives/edgar/data/5907/000095012305006605/y04651dmdefm14a.htm
+T_CORP,1996-09-30,info,0.0,,0.0,"Lucent spin-off (0.32408 LU/sh): inside T_CORP total-return series (value reinvested, factor 1/0.7201)",https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/
+T_CORP,1997-01-02,info,0.0,,0.0,"NCR spin-off (0.0625 NCR/sh): inside T_CORP series (1/0.9523), at ex-date",https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/
+T_CORP,2001-07-09,info,0.0,,0.0,"AT&T Wireless spin-off (0.3218 AWE/sh): inside T_CORP series (1/0.7766)",https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/
+T_CORP,2002-11-18,info,0.0,,0.0,"AT&T Broadband -> Comcast (0.3235 CMCSA/sh) + 1:5 reverse split: inside T_CORP series (1/0.374, x0.2 shares)",https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/
+XOM,1999-11-30,info,0.0,,0.0,"Exxon acquires Mobil (1.32015 XOM per MOB); Exxon was the acquirer and legal survivor, ticker XON->XOM; Yahoo XOM history is Exxon's -> continuous, no action",https://en.wikipedia.org/wiki/ExxonMobil
+IBM,2021-11-04,yahoo_adjusted,0.0,KD,0.2,"Kyndryl spin-off (1 KD per 5 IBM): Yahoo encodes as 1.046 pseudo-split -> value reinvested in IBM",https://www.ibm.com/investor
+GE,2019-02-26,yahoo_adjusted,0.0,WAB,0.0,"GE Transportation / Wabtec Reverse Morris Trust distribution: Yahoo pseudo-split 1.04",https://www.ge.com/investor-relations
+GE,2021-08-02,yahoo_adjusted,0.0,GE,0.125,"1-for-8 reverse split: Yahoo split-adjusted",https://www.ge.com/investor-relations
+GE,2023-01-04,yahoo_adjusted,0.0,GEHC,0.333333,"GE HealthCare spin-off (1 GEHC per 3 GE): Yahoo pseudo-split 1.281",https://www.ge.com/investor-relations
+GE,2024-04-02,yahoo_adjusted,0.0,GEV,0.25,"GE Vernova spin-off (1 GEV per 4 GE): Yahoo pseudo-split 1.253; GE now trades as GE Aerospace (same legal entity)",https://www.ge.com/investor-relations
+T,2022-04-11,yahoo_adjusted,0.0,WBD,0.241917,"WarnerMedia spin/merge with Discovery (0.241917 WBD per T): Yahoo pseudo-split 1.324",https://investors.att.com/stock-information/historical-stock-information/warnermedia-transaction/warnermedia-transaction
+VZ,2006-11-20,yahoo_adjusted,0.0,IAR,0.05,"Idearc spin-off (1 per 20): Yahoo pseudo-split 1.0381",https://bimajority.org/~wollman/t.html
+VZ,2008-04-01,yahoo_adjusted,0.0,FRP,0.0,"FairPoint spin/merge (1 per 53.0245): Yahoo pseudo-split 1.0047",https://bimajority.org/~wollman/t.html
+VZ,2010-07-02,yahoo_adjusted,0.0,FTR,0.0,"Frontier spin/merge (0.240 FTR per VZ): Yahoo pseudo-split 1.0662",https://bimajority.org/~wollman/t.html
+MO,2007-04-02,yahoo_adjusted,0.0,KFT,0.692024,"Kraft Foods spin-off: Yahoo records a $21.909 special dividend -> value reinvested in MO",https://www.altria.com/investors
+MO,2008-03-31,yahoo_adjusted,0.0,PM,1.0,"Philip Morris International spin-off (1 PM per MO): Yahoo records a $51.06 special dividend",https://www.altria.com/investors
+PFE,2020-11-17,yahoo_adjusted,0.0,VTRS,0.124079,"Upjohn/Viatris spin-merge: Yahoo pseudo-split 1.054",https://investors.pfizer.com
+GOOGL,2014-04-03,yahoo_adjusted,0.0,GOOG,1.0,"Class C stock dividend (1 GOOG per GOOGL): Yahoo pseudo-split 1.998",https://abc.xyz/investor/
+FDO,2015-07-06,cash,74.5,,0.0,"starter example from the original notebook; not in the Phase 1 universe (never held)",
+XL,2018-09-12,cash,57.6,,0.0,"starter example from the original notebook; not in the Phase 1 universe (never held)",
+COG,2021-10-01,stock,0.0,CTRA,1.0,"starter example from the original notebook; not in the Phase 1 universe (never held)",
+CTRA,2026-05-07,stock,0.0,DVN,0.7,"starter example from the original notebook; after the valuation date",

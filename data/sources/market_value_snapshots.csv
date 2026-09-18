@@ -1,0 +1,26 @@
+as_of,publication,rank,company,ticker,market_value_billions,source_url,note
+1985-12-31,Forbes 500s (year-end market value),1,IBM,IBM,95.7,https://www.upi.com/Archives/1986/04/13/Forbes-releases-last-of-major-corporate-rankings/3398513752400/,UPI 1986-04-13
+1985-12-31,Forbes 500s (year-end market value),2,Exxon,XOM,40.3,https://www.upi.com/Archives/1986/04/13/Forbes-releases-last-of-major-corporate-rankings/3398513752400/,
+1985-12-31,Forbes 500s (year-end market value),3,General Electric,GE,33.2,https://www.upi.com/Archives/1986/04/13/Forbes-releases-last-of-major-corporate-rankings/3398513752400/,
+1985-12-31,Forbes 500s (year-end market value),4,AT&T,T_CORP,26.7,https://www.upi.com/Archives/1986/04/13/Forbes-releases-last-of-major-corporate-rankings/3398513752400/,
+1985-12-31,Forbes 500s (year-end market value),5,General Motors,GM_OLD,22.3,https://www.upi.com/Archives/1986/04/13/Forbes-releases-last-of-major-corporate-rankings/3398513752400/,
+1986-03-21,Business Week 1000,1,IBM,IBM,91.7,https://www.upi.com/Archives/1986/04/10/Business-Week-introduces-top-1000-market-value-rankings/6805513493200/,shares outstanding x price on March 21
+1986-03-21,Business Week 1000,2,Exxon,XOM,40.1,https://www.upi.com/Archives/1986/04/10/Business-Week-introduces-top-1000-market-value-rankings/6805513493200/,
+1986-03-21,Business Week 1000,3,General Electric,GE,34.7,https://www.upi.com/Archives/1986/04/10/Business-Week-introduces-top-1000-market-value-rankings/6805513493200/,
+1986-03-21,Business Week 1000,4,General Motors,GM_OLD,26.5,https://www.upi.com/Archives/1986/04/10/Business-Week-introduces-top-1000-market-value-rankings/6805513493200/,
+1986-03-21,Business Week 1000,5,AT&T,T_CORP,24.3,https://www.upi.com/Archives/1986/04/10/Business-Week-introduces-top-1000-market-value-rankings/6805513493200/,
+1986-12-31,Forbes 500s (year-end market value),1,IBM,IBM,72.7,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,cited inside the UPI BW-1000 story
+1987-03-20,Business Week 1000,1,IBM,IBM,90.0,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,
+1987-03-20,Business Week 1000,2,Exxon,XOM,61.6,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,
+1987-03-20,Business Week 1000,3,General Electric,GE,48.9,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,
+1987-03-20,Business Week 1000,4,Du Pont,DD_OLD,27.5,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,
+1987-03-20,Business Week 1000,5,AT&T,T_CORP,25.7,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,
+1987-03-20,Business Week 1000,6,General Motors,GM_OLD,25.0,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,
+1987-03-20,Business Week 1000,7,Merck,MRK,22.3,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,
+1987-03-20,Business Week 1000,8,Digital Equipment,DEC,21.6,https://www.upi.com/Archives/1987/04/08/IBM-ranked-as-biggest-blue-chip-in-Business-Week-1000-list/4550544852800/,
+1988-03-18,Business Week 1000,1,IBM,IBM,68.2,https://www.upi.com/Archives/1988/04/14/Business-Week-ranks-most-valued-public-companies/4119576993600/,
+1988-03-18,Business Week 1000,2,Exxon,XOM,60.9,https://www.upi.com/Archives/1988/04/14/Business-Week-ranks-most-valued-public-companies/4119576993600/,
+1988-03-18,Business Week 1000,3,General Electric,GE,39.7,https://www.upi.com/Archives/1988/04/14/Business-Week-ranks-most-valued-public-companies/4119576993600/,
+1988-03-18,Business Week 1000,4,AT&T,T_CORP,30.9,https://www.upi.com/Archives/1988/04/14/Business-Week-ranks-most-valued-public-companies/4119576993600/,
+1988-03-18,Business Week 1000,5,General Motors,GM_OLD,22.5,https://www.upi.com/Archives/1988/04/14/Business-Week-ranks-most-valued-public-companies/4119576993600/,
+1994-02-28,Exxon 10-K FY1993 cover,,Exxon,XOM,80.6,https://www.sec.gov/Archives/edgar/data/34088/0000950131-94-000308.txt,1242.1M shares x $64.875 (non-affiliate value stated as 'in excess of $80 billion')

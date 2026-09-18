@@ -1,0 +1,17 @@
+[project]
+name = "sp500bt"
+version = "0.1.0"
+description = "S&P 500 #1-company DCA backtest (1975-2026) with sourced point-in-time data"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I"]
+
+[tool.mypy]
+python_version = "3.14"
+ignore_missing_imports = true
+check_untyped_defs = true

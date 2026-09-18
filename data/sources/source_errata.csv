@@ -1,0 +1,5 @@
+source,year,period,rank,wrong_company,corrected_company,evidence
+wikipedia_ft_global_top10,2024,Q2,1,Apple,Microsoft,"Value 3,322,000 matches Microsoft (446.95 x 7.43B shares = $3.32T on 2024-06-28), not Apple (210.62 x 15.33B = $3.23T); labels transposed in revision 1371146339"
+wikipedia_ft_global_top10,2024,Q2,2,Microsoft,Apple,see above
+wikipedia_ft_global_top10,2024,Q3,1,Microsoft,Apple,"Value 3,543,000 matches Apple (233.00 x 15.12B = $3.52T on 2024-09-30), not Microsoft (430.30 x 7.43B = $3.20T); labels transposed in revision 1371146339"
+wikipedia_ft_global_top10,2024,Q3,2,Apple,Microsoft,see above

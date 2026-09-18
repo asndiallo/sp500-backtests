@@ -1,0 +1,131 @@
+pay_date,amount,symbol,kind,source_url,note
+1984-02-09,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 17.38
+1984-05-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 16.38
+1984-08-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 17.75
+1984-11-02,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 20.50
+1985-02-05,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 20.50
+1985-05-07,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 20.63
+1985-08-05,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 21.50
+1985-11-08,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 21.25
+1986-02-03,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 21.50
+1986-05-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 25.00
+1986-08-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 23.62
+1986-11-03,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 24.88
+1987-02-03,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 24.25
+1987-05-04,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 24.13
+1987-08-04,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 31.88
+1987-11-02,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 30.00
+1988-02-03,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 29.50
+1988-05-02,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 26.50
+1988-08-02,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 26.63
+1988-11-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 28.63
+1989-02-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 32.00
+1989-05-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 34.63
+1989-08-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 39.88
+1989-11-01,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 44.13
+1990-02-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 38.38
+1990-05-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 40.38
+1990-08-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 36.75
+1990-11-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 34.75
+1991-02-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 31.75
+1991-05-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 37.75
+1991-08-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 39.63
+1991-11-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 38.63
+1992-02-03,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 36.88
+1992-05-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 43.25
+1992-08-03,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 43.88
+1992-11-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 44.13
+1993-02-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 54.00
+1993-05-03,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 56.75
+1993-08-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 63.75
+1993-11-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 58.00
+1994-02-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 56.25
+1994-05-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 52.63
+1994-08-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 54.63
+1994-11-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 54.50
+1995-02-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 49.50
+1995-05-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 50.38
+1995-08-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 52.38
+1995-11-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 63.63
+1996-02-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 66.38
+1996-05-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 60.50
+1996-08-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 52.88
+1996-11-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 34.50
+1997-02-03,0.3,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,"price when paid 39.38; SUSPECT: 0.300 between 0.330 payments (likely source typo, kept as printed)"
+1997-05-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 33.88
+1997-08-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 37.25
+1997-11-03,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 49.94
+1998-02-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 62.81
+1998-05-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 60.75
+1998-08-04,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 59.50
+1998-11-02,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 61.56
+1999-02-01,0.33,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 93.56
+1999-04-01,0.22,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 79.82; post 3:2-split amount (0.22 x 1.5 = 0.33)
+1999-05-03,0.22,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 50.50
+1999-08-01,0.22,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 51.50
+1999-11-01,0.22,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 47.31
+2000-02-01,0.22,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 52.50
+2000-05-01,0.22,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 49.00
+2000-08-02,0.22,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 31.81
+2000-11-02,0.038,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 22.00
+2001-02-01,0.038,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 23.98
+2001-05-02,0.038,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 23.08
+2001-08-01,0.038,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 20.30
+2001-11-01,0.038,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 15.04
+2002-02-01,0.038,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 17.33
+2002-05-01,0.038,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 13.96
+2002-08-01,0.038,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 9.67
+2002-11-01,0.019,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 13.52; SUSPECT: 0.019 vs 0.038 run-rate (kept as printed)
+2003-02-03,0.188,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 19.02
+2003-05-01,0.188,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 16.77
+2003-08-01,0.237,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 22.10
+2003-11-03,0.238,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 18.87
+2004-02-02,0.238,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 19.53
+2004-05-03,0.238,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 17.04
+2004-08-02,0.237,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 15.16
+2004-11-01,0.237,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 17.27
+2005-02-01,0.237,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 19.14
+2005-05-02,0.237,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 19.03
+2005-08-01,0.237,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 19.84
+2005-11-01,0.237,T_CORP,regular,https://historicalstockinfo.com/att-corp-dividends-reference-sheet/,price when paid 19.72
+1974-01-01,0.77,T_OLD,regular,https://memorial.bellsystem.com/pdf/1975ATTar_Complete.pdf,"AR 1975 Market and Dividend Information, 1974 Q1 paid"
+1974-04-01,0.77,T_OLD,regular,https://memorial.bellsystem.com/pdf/1975ATTar_Complete.pdf,"AR 1975 Market and Dividend Information, 1974 Q2 paid"
+1974-07-01,0.77,T_OLD,regular,https://memorial.bellsystem.com/pdf/1975ATTar_Complete.pdf,"AR 1975 Market and Dividend Information, 1974 Q3 paid"
+1974-10-01,0.85,T_OLD,regular,https://memorial.bellsystem.com/pdf/1975ATTar_Complete.pdf,"AR 1975 Market and Dividend Information, 1974 Q4 paid"
+1975-01-01,0.85,T_OLD,regular,https://memorial.bellsystem.com/pdf/1975ATTar_Complete.pdf,"AR 1975 Market and Dividend Information, 1975 Q1 paid"
+1975-04-01,0.85,T_OLD,regular,https://memorial.bellsystem.com/pdf/1975ATTar_Complete.pdf,"AR 1975 Market and Dividend Information, 1975 Q2 paid"
+1975-07-01,0.85,T_OLD,regular,https://memorial.bellsystem.com/pdf/1975ATTar_Complete.pdf,"AR 1975 Market and Dividend Information, 1975 Q3 paid"
+1975-10-01,0.85,T_OLD,regular,https://memorial.bellsystem.com/pdf/1975ATTar_Complete.pdf,"AR 1975 Market and Dividend Information, 1975 Q4 paid"
+1976-01-01,0.85,T_OLD,regular,https://memorial.bellsystem.com/pdf/1976ATTar_Complete.pdf,"AR 1976 Market and Dividend Information, 1976 Q1 paid"
+1976-04-01,0.95,T_OLD,regular,https://memorial.bellsystem.com/pdf/1976ATTar_Complete.pdf,"AR 1976 Market and Dividend Information, 1976 Q2 paid"
+1976-07-01,0.95,T_OLD,regular,https://memorial.bellsystem.com/pdf/1976ATTar_Complete.pdf,"AR 1976 Market and Dividend Information, 1976 Q3 paid"
+1976-10-01,0.95,T_OLD,regular,https://memorial.bellsystem.com/pdf/1976ATTar_Complete.pdf,"AR 1976 Market and Dividend Information, 1976 Q4 paid"
+1977-01-01,0.95,T_OLD,regular,https://memorial.bellsystem.com/pdf/1977ATTar_Complete.pdf,"AR 1977 Market and Dividend Information, 1977 Q1 paid"
+1977-04-01,1.05,T_OLD,regular,https://memorial.bellsystem.com/pdf/1977ATTar_Complete.pdf,"AR 1977 Market and Dividend Information, 1977 Q2 paid"
+1977-07-01,1.05,T_OLD,regular,https://memorial.bellsystem.com/pdf/1977ATTar_Complete.pdf,"AR 1977 Market and Dividend Information, 1977 Q3 paid"
+1977-10-01,1.05,T_OLD,regular,https://memorial.bellsystem.com/pdf/1977ATTar_Complete.pdf,"AR 1977 Market and Dividend Information, 1977 Q4 paid"
+1978-01-01,1.05,T_OLD,regular,https://memorial.bellsystem.com/pdf/1979ATTar_Complete.pdf,"AR 1979 Market and Dividend Information, 1978 Q1 paid"
+1978-04-01,1.15,T_OLD,regular,https://memorial.bellsystem.com/pdf/1979ATTar_Complete.pdf,"AR 1979 Market and Dividend Information, 1978 Q2 paid"
+1978-07-01,1.15,T_OLD,regular,https://memorial.bellsystem.com/pdf/1979ATTar_Complete.pdf,"AR 1979 Market and Dividend Information, 1978 Q3 paid"
+1978-10-01,1.15,T_OLD,regular,https://memorial.bellsystem.com/pdf/1979ATTar_Complete.pdf,"AR 1979 Market and Dividend Information, 1978 Q4 paid"
+1979-01-01,1.15,T_OLD,regular,https://memorial.bellsystem.com/pdf/1979ATTar_Complete.pdf,"AR 1979 Market and Dividend Information, 1979 Q1 paid"
+1979-04-01,1.25,T_OLD,regular,https://memorial.bellsystem.com/pdf/1979ATTar_Complete.pdf,"AR 1979 Market and Dividend Information, 1979 Q2 paid"
+1979-07-01,1.25,T_OLD,regular,https://memorial.bellsystem.com/pdf/1979ATTar_Complete.pdf,"AR 1979 Market and Dividend Information, 1979 Q3 paid"
+1979-10-01,1.25,T_OLD,regular,https://memorial.bellsystem.com/pdf/1979ATTar_Complete.pdf,"AR 1979 Market and Dividend Information, 1979 Q4 paid"
+1980-01-01,1.25,T_OLD,regular,https://memorial.bellsystem.com/pdf/1981ATTar_Complete.pdf,"AR 1981 Market and Dividend Information, 1980 Q1 paid"
+1980-04-01,1.25,T_OLD,regular,https://memorial.bellsystem.com/pdf/1981ATTar_Complete.pdf,"AR 1981 Market and Dividend Information, 1980 Q2 paid"
+1980-07-01,1.25,T_OLD,regular,https://memorial.bellsystem.com/pdf/1981ATTar_Complete.pdf,"AR 1981 Market and Dividend Information, 1980 Q3 paid"
+1980-10-01,1.25,T_OLD,regular,https://memorial.bellsystem.com/pdf/1981ATTar_Complete.pdf,"AR 1981 Market and Dividend Information, 1980 Q4 paid"
+1981-01-01,1.25,T_OLD,regular,https://memorial.bellsystem.com/pdf/1981ATTar_Complete.pdf,"AR 1981 Market and Dividend Information, 1981 Q1 paid"
+1981-04-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1981ATTar_Complete.pdf,"AR 1981 Market and Dividend Information, 1981 Q2 paid"
+1981-07-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1981ATTar_Complete.pdf,"AR 1981 Market and Dividend Information, 1981 Q3 paid"
+1981-10-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1981ATTar_Complete.pdf,"AR 1981 Market and Dividend Information, 1981 Q4 paid"
+1982-01-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1982ATTar_Complete.pdf,"AR 1982 Market and Dividend Information, 1982 Q1 paid"
+1982-04-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1982ATTar_Complete.pdf,"AR 1982 Market and Dividend Information, 1982 Q2 paid"
+1982-07-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1982ATTar_Complete.pdf,"AR 1982 Market and Dividend Information, 1982 Q3 paid"
+1982-10-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1982ATTar_Complete.pdf,"AR 1982 Market and Dividend Information, 1982 Q4 paid"
+1983-01-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1983ATTar_Complete.pdf,AR 1983: 1983 Q1 paid $1.80 incl. special
+1983-04-01,0.45,T_OLD,special,https://memorial.bellsystem.com/pdf/1983ATTar_Complete.pdf,"one-time $.45, holders of record 1983-03-31 (schedule change)"
+1983-05-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1983ATTar_Complete.pdf,AR 1983 Q2
+1983-08-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1983ATTar_Complete.pdf,AR 1983 Q3
+1983-11-01,1.35,T_OLD,regular,https://memorial.bellsystem.com/pdf/1983ATTar_Complete.pdf,AR 1983 Q4

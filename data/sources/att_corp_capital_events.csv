@@ -1,0 +1,7 @@
+date,symbol,event,shares_factor,value_factor,source_url,note
+1999-04-15,T_CORP,3-for-2 stock split,1.5,1.0,https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/,
+1996-09-30,T_CORP,Lucent spin-off (0.32408 LU per T),1.0,1.388696,https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/,basis allocated 72.01% T / 27.99% LU; value reinvested in T => factor 1/0.7201
+1997-01-02,T_CORP,NCR spin-off (0.0625 NCR per T; distributed 1996-12-31),1.0,1.050089,https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/,basis 95.23% T / 4.77% NCR => 1/0.9523; applied at the 1997-01-02 ex-date because the 1996-12-31 close (41.75) still carried the NCR entitlement (Jan-97 close 39.38)
+2001-07-09,T_CORP,AT&T Wireless spin-off (0.3218 AWE per T),1.0,1.287664,https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/,basis 77.66% T / 22.34% AWE => 1/0.7766
+2002-11-18,T_CORP,AT&T Broadband -> Comcast (0.3235 CMCSA per T) then 1-for-5 reverse split,0.2,2.673797,https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/,basis 37.4% T / 62.6% CMCSA => 1/0.374; Wollman ratio 0.3235 (HSI prints .325)
+2005-11-18,T_CORP,Acquired by SBC (renamed AT&T Inc) 0.77942 SBC per T,,,https://historicalstockinfo.com/att-corp-stock-history-mergers-splits/,handled in data/corporate_actions.csv
