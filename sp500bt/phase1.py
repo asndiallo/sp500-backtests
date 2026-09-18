@@ -244,12 +244,27 @@ def decide(ranking: pd.DataFrame, ms, dfa, ft, press, uni) -> pd.DataFrame:
     return pd.DataFrame(out)
 
 
-def top10_lists(ranking: pd.DataFrame, uni: pd.DataFrame) -> pd.DataFrame:
-    """S&P 500 members only, by the quantitative ranking at each quarter-end."""
+def topn_lists(ranking: pd.DataFrame, uni: pd.DataFrame, n: int = 10, detail: bool = False) -> pd.DataFrame:
+    """The ``n`` largest S&P 500 members by the quantitative ranking at each quarter-end
+    (column ``top{n}``). ``detail`` adds the n-th and (n+1)-th names and caps.
+
+    From CMC_START on, own estimates for names companiesmarketcap lacks (Google 2006-2013,
+    AT&T Corp 1996) are ranked alongside the vendor values, exactly as in the #1 decision.
+    (Until 2026-09 only vendor rows were used here, which dropped Google from every
+    2006-2013 top-10 list; see reports/methodology.md.)"""
     added = dict(zip(uni.ticker, uni.sp500_added, strict=True))
     rows = []
-    for d, g in ranking[ranking.source == "cmc"].groupby("date"):
+    usable = ranking[ranking.source.isin(["cmc", "estimate"]) & (ranking.date >= CMC_START)]
+    for d, g in usable.groupby("date"):
         g = g[[added.get(t, pd.Timestamp.max) <= d for t in g.ticker]]
-        g = g.sort_values("mcap_bn", ascending=False).head(10)
-        rows.append({"observation_date": d.date(), "top10": ",".join(g.ticker)})
+        g = g.sort_values("mcap_bn", ascending=False)
+        row = {"observation_date": d.date(), f"top{n}": ",".join(g.ticker.head(n))}
+        if detail:
+            row |= {f"rank{n}_mcap_bn": round(g.mcap_bn.iloc[n - 1], 1), f"rank{n + 1}_ticker": g.ticker.iloc[n],
+                    f"rank{n + 1}_mcap_bn": round(g.mcap_bn.iloc[n], 1), "members_ranked": len(g)}
+        rows.append(row)
     return pd.DataFrame(rows)
+
+
+def top10_lists(ranking: pd.DataFrame, uni: pd.DataFrame) -> pd.DataFrame:
+    return topn_lists(ranking, uni, 10)

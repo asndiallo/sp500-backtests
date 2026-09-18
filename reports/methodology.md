@@ -16,6 +16,23 @@ The starter 2011–2026 table had several errors that the sourced table corrects
 - **No Stooq fallback.** pandas-datareader 0.11 removed its Stooq reader, and stooq.com now puts downloads behind a JavaScript proof-of-work bot check, which I did not circumvent. In its place, the one family Yahoo lacks (old AT&T and AT&T Corp) is hand-built from sourced data. All 71 Yahoo series fetched cleanly (`results/data_quality/price_fetch_report.csv`).
 - **Old AT&T prices are month-end high–low averages** of the last trading day, not closes (±0.5%). AT&T Corp's **1998 month-ends are log-interpolated** between dividend-date prices because the source table skips 1998.
 - **Top-10 lists:** UNRESOLVED for 1975–1995 (no source for full lists), PARTIAL for 1996–2005 (companiesmarketcap lacks delisted giants such as AT&T Corp, Lucent, AOL/Time Warner and BellSouth, so lists there are survivorship-biased), COMPLETE from 2006. The top-10 variant therefore runs 2006–2026 only.
+- **Correction (2026-09-18): Google was missing from the 2008–2014 top-10 lists.**
+  - **Cause.** companiesmarketcap's Alphabet series starts in 2014-03, so Google's 2006–2013 market caps are my own estimates from its 10-K/10-Q share counts. The #1 decision always used them, but the top-10 list builder read only vendor rows.
+  - **Effect.** Google was dropped from 19 "COMPLETE" lists (2008-01-01 → 2014-01-01), where it actually ranked #3–#10. The marginal #10 name held its place instead.
+  - **Fix.** `phase1.topn_lists` now ranks estimate rows alongside vendor rows from 1996 on. This also adds AT&T Corp to the 1996 PARTIAL candidate lists.
+  - **Unaffected:** #1, runner-up and every top1 result.
+  - **Re-run families:** `top10_ew`, `random_pick_placebo`, `alt_pickers` (ranks 2–5) and `fundamentals_picker` (references).
+
+  | Run                                           | Before |  After |
+  | --------------------------------------------- | -----: | -----: |
+  | Top-10 equal-weight, 2006–2026, XIRR          | 14.67% | 15.00% |
+  | Top-10 equal-weight, 2006–2026, Sharpe        |   0.72 |   0.73 |
+  | Top-10 equal-weight, 2006–2026, trailing stop | 12.80% | 13.04% |
+  | Ranks 2–5 equal-weight                        | 16.58% | 16.89% |
+  | 2012–2026 top-10 equal-weight reference       | 17.77% | 18.39% |
+
+  No conclusion changed. The placebo numbers in its report are the corrected ones.
+
 - **IBM's 1974–75 share counts are extrapolated.** The 1975-01-01 row (AT&T by Morgan Stanley; IBM by my estimate, 0.8% apart) is LOW for that reason.
 - **Third-party source errors I found and corrected or excluded:**
   - Wikipedia's 2024 Q2/Q3 Apple/Microsoft labels are transposed.

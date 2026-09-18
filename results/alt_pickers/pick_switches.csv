@@ -15,9 +15,9 @@ buffer10_baseline_hold,top1_margin_buffer_10,baseline_hold,1975-01-01,205,20,7,9
 buffer20_baseline_hold,top1_margin_buffer_20,baseline_hold,1975-01-01,205,14,7,13.666666666666666,0.09711386151635748
 buffer10_baseline_hold_from_1995,top1_margin_buffer_10,baseline_hold,1995-01-01,125,11,5,10.416666666666666,0.10693716997961052
 buffer20_baseline_hold_from_1995,top1_margin_buffer_20,baseline_hold,1995-01-01,125,7,5,15.625,0.09925217239519574
-ranks2to5_ew_baseline_hold,ranks_ew_2_5,baseline_hold,2006-04-01,80,43,19,1.8181818181818181,0.16584995171874226
-ranks2to5_ew_trailing_stop_25,ranks_ew_2_5,trailing_stop_25,2006-04-01,80,43,19,1.8181818181818181,0.1449859704356143
-ranks2to5_ew_buy_the_dip_25_50,ranks_ew_2_5,buy_the_dip_25_50,2006-04-01,80,43,19,1.8181818181818181,0.16720495753955691
+ranks2to5_ew_baseline_hold,ranks_ew_2_5,baseline_hold,2006-04-01,80,40,19,1.951219512195122,0.1689166896971238
+ranks2to5_ew_trailing_stop_25,ranks_ew_2_5,trailing_stop_25,2006-04-01,80,40,19,1.951219512195122,0.14678793251494562
+ranks2to5_ew_buy_the_dip_25_50,ranks_ew_2_5,buy_the_dip_25_50,2006-04-01,80,40,19,1.951219512195122,0.16945190735803817
 top1_reference_baseline_hold,top1,baseline_hold,1975-01-01,205,39,8,5.125,0.0972795929645281
 top1_reference_baseline_hold_from_1995,top1,baseline_hold,1995-01-01,125,21,5,5.681818181818182,0.10655501379807106
 rank2_reference_baseline_hold_from_2006,rank_2,baseline_hold,2006-04-01,80,21,8,3.6363636363636362,0.1686456984985044

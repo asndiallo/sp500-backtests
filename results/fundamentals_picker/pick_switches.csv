@@ -2,9 +2,9 @@ run,picker,rule,start,contributions,switches,distinct_tickers,mean_spell_periods
 fundamental_baseline_hold,fundamental_rank_50_50_400,baseline_hold,2012-04-01,56,11,6,4.666666666666667,0.2374978530490152
 fundamental_trailing_stop_25,fundamental_rank_50_50_400,trailing_stop_25,2012-04-01,56,11,6,4.666666666666667,0.1767643890315061
 fundamental_buy_the_dip_25_50,fundamental_rank_50_50_400,buy_the_dip_25_50,2012-04-01,56,11,6,4.666666666666667,0.2585180223191867
-growth_only_baseline_hold,fundamental_rank_1.0_0_400,baseline_hold,2012-04-01,56,11,9,4.666666666666667,0.22103722743230333
+growth_only_baseline_hold,fundamental_rank_1.0_0_400,baseline_hold,2012-04-01,56,9,8,5.6,0.22552416549938847
 margin_only_baseline_hold,fundamental_rank_0_1.0_400,baseline_hold,2012-04-01,56,10,8,5.090909090909091,0.17732108048380452
 top1_baseline_hold_from_2012,top1,baseline_hold,2012-04-01,56,9,4,5.6,0.24569367430359432
 top1_trailing_stop_25_from_2012,top1,trailing_stop_25,2012-04-01,56,9,4,5.6,0.15738559150107598
 top1_buy_the_dip_25_50_from_2012,top1,buy_the_dip_25_50,2012-04-01,56,9,4,5.6,0.26282813675039013
-top10_ew_baseline_hold_from_2012,top10_ew,baseline_hold,2012-04-01,56,36,24,1.5135135135135136,0.17767473639163683
+top10_ew_baseline_hold_from_2012,top10_ew,baseline_hold,2012-04-01,56,32,24,1.696969696969697,0.1839494951639482
