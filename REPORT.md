@@ -171,7 +171,7 @@ The starter 2011–2026 table had several errors that the sourced table corrects
 
 ```py
 source .venv/bin/activate
-python scripts/fetch_sources.py        # automatable sources (browser-only ones are committed; see data/sources/README.md)
+python scripts/fetch_sources.py        # automatable sources; `cmc` is required on a fresh clone (scraped data is not committed)
 python scripts/cache_prices.py         # Yahoo cache + failure report
 python scripts/build_manual_prices.py  # T_OLD, T_CORP, SPX_TR
 python scripts/build_top_table.py      # Phase 1 table + transitions
