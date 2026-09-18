@@ -45,25 +45,24 @@ The buy-the-dip "invested" figures include its top-ups. **The top-10 row runs on
 
 Key variants from the later scenario families, built by the same summary step from `scenarios/_summary.toml` ([`results/extended_comparison.csv`](results/extended_comparison.csv)). **Rows sit on different windows**: compare each row only with its own index leg and with the reference row of its section.
 
-| Section | Variant | Window | Stock-leg XIRR | Index XIRR | Stock − index | Stock Sharpe | Index Sharpe | Stock max DD | Report |
-|---|---|---|---:|---:|---:|---:|---:|---:|---|
-| Pickers | #1 (reference) | 1975–2026 | 9.73% | 11.87% | −2.15 pp | 0.43 | 0.58 | −57% | [top1_core](reports/top1_core.md) |
-| Pickers | #1 with a 5% margin buffer | 1975–2026 | 9.72% | 11.87% | −2.15 pp | 0.42 | 0.58 | −56% | [alt_pickers](reports/alt_pickers.md) |
-| Pickers | #2 (runner-up) | 1975–2026 | 10.47% | 11.87% | −1.41 pp | 0.52 | 0.58 | −51% | [alt_pickers](reports/alt_pickers.md) |
-| Pickers | #2 (runner-up) | 1995–2026 | 11.67% | 10.68% | +0.99 pp | 0.57 | 0.62 | −53% | [alt_pickers](reports/alt_pickers.md) |
-| Pickers | #1 (reference) | 2012–2026 | 24.57% | 14.74% | +9.83 pp | 0.80 | 0.92 | −44% | [fundamentals_picker](reports/fundamentals_picker.md) |
-| Pickers | Best growth + margin rank in the top 10 | 2012–2026 | 23.75% | 14.74% | +9.01 pp | 0.88 | 0.92 | −44% | [fundamentals_picker](reports/fundamentals_picker.md) |
-| Rules (#1) | 25% trailing stop (reference) | 1975–2026 | 11.72% | 11.87% | −0.15 pp | 0.58 | 0.58 | −53% | [top1_core](reports/top1_core.md) |
-| Rules (#1) | Partial trim: 50% at −25%, once per lot | 1975–2026 | 10.91% | 11.87% | −0.96 pp | 0.53 | 0.58 | −51% | [rule_variants](reports/rule_variants.md) |
-| Rules (#1) | 25% stop + rebuy on regaining #1 | 1975–2026 | 10.42% | 11.87% | −1.45 pp | 0.49 | 0.58 | −53% | [rule_variants](reports/rule_variants.md) |
-| Rules (#1) | Volatility-scaled stop (k = 1) | 1975–2026 | 11.56% | 11.87% | −0.32 pp | 0.56 | 0.58 | −55% | [rule_variants](reports/rule_variants.md) |
-| Breadth (common window) | #1 | 2009–2026 | 19.33% | 14.71% | +4.61 pp | 0.79 | 1.01 | −34% | [breadth](reports/breadth.md) |
-| Breadth (common window) | Top-3 equal-weight | 2009–2026 | 21.17% | 14.71% | +6.46 pp | 1.06 | 1.01 | −29% | [breadth](reports/breadth.md) |
-| Breadth (common window) | Top-10 equal-weight | 2009–2026 | 17.59% | 14.71% | +2.88 pp | 1.10 | 1.01 | −29% | [breadth](reports/breadth.md) |
-| Breadth (common window) | Top-20 equal-weight | 2009–2026 | 15.56% | 14.71% | +0.85 pp | 1.03 | 1.01 | −30% | [breadth](reports/breadth.md) |
-| Cadence (#1, baseline hold) | Monthly $166.67 | 1975–2026 | 9.74% | 11.86% | −2.12 pp | 0.43 | 0.58 | −57% | [cadence](reports/cadence.md) |
-| Cadence (#1, baseline hold) | Annual lump sum $2,000 | 1975–2026 | 9.66% | 11.93% | −2.27 pp | 0.41 | 0.58 | −56% | [cadence](reports/cadence.md) |
-
+| Section                     | Variant                                 | Window    | Stock-leg XIRR | Index XIRR | Stock − index | Stock Sharpe | Index Sharpe | Stock max DD | Report                                                |
+| --------------------------- | --------------------------------------- | --------- | -------------: | ---------: | ------------: | -----------: | -----------: | -----------: | ----------------------------------------------------- |
+| Pickers                     | #1 (reference)                          | 1975–2026 |          9.73% |     11.87% |      −2.15 pp |         0.43 |         0.58 |         −57% | [top1_core](reports/top1_core.md)                     |
+| Pickers                     | #1 with a 5% margin buffer              | 1975–2026 |          9.72% |     11.87% |      −2.15 pp |         0.42 |         0.58 |         −56% | [alt_pickers](reports/alt_pickers.md)                 |
+| Pickers                     | #2 (runner-up)                          | 1975–2026 |         10.47% |     11.87% |      −1.41 pp |         0.52 |         0.58 |         −51% | [alt_pickers](reports/alt_pickers.md)                 |
+| Pickers                     | #2 (runner-up)                          | 1995–2026 |         11.67% |     10.68% |      +0.99 pp |         0.57 |         0.62 |         −53% | [alt_pickers](reports/alt_pickers.md)                 |
+| Pickers                     | #1 (reference)                          | 2012–2026 |         24.57% |     14.74% |      +9.83 pp |         0.80 |         0.92 |         −44% | [fundamentals_picker](reports/fundamentals_picker.md) |
+| Pickers                     | Best growth + margin rank in the top 10 | 2012–2026 |         23.75% |     14.74% |      +9.01 pp |         0.88 |         0.92 |         −44% | [fundamentals_picker](reports/fundamentals_picker.md) |
+| Rules (#1)                  | 25% trailing stop (reference)           | 1975–2026 |         11.72% |     11.87% |      −0.15 pp |         0.58 |         0.58 |         −53% | [top1_core](reports/top1_core.md)                     |
+| Rules (#1)                  | Partial trim: 50% at −25%, once per lot | 1975–2026 |         10.91% |     11.87% |      −0.96 pp |         0.53 |         0.58 |         −51% | [rule_variants](reports/rule_variants.md)             |
+| Rules (#1)                  | 25% stop + rebuy on regaining #1        | 1975–2026 |         10.42% |     11.87% |      −1.45 pp |         0.49 |         0.58 |         −53% | [rule_variants](reports/rule_variants.md)             |
+| Rules (#1)                  | Volatility-scaled stop (k = 1)          | 1975–2026 |         11.56% |     11.87% |      −0.32 pp |         0.56 |         0.58 |         −55% | [rule_variants](reports/rule_variants.md)             |
+| Breadth (common window)     | #1                                      | 2009–2026 |         19.33% |     14.71% |      +4.61 pp |         0.79 |         1.01 |         −34% | [breadth](reports/breadth.md)                         |
+| Breadth (common window)     | Top-3 equal-weight                      | 2009–2026 |         21.17% |     14.71% |      +6.46 pp |         1.06 |         1.01 |         −29% | [breadth](reports/breadth.md)                         |
+| Breadth (common window)     | Top-10 equal-weight                     | 2009–2026 |         17.59% |     14.71% |      +2.88 pp |         1.10 |         1.01 |         −29% | [breadth](reports/breadth.md)                         |
+| Breadth (common window)     | Top-20 equal-weight                     | 2009–2026 |         15.56% |     14.71% |      +0.85 pp |         1.03 |         1.01 |         −30% | [breadth](reports/breadth.md)                         |
+| Cadence (#1, baseline hold) | Monthly $166.67                         | 1975–2026 |          9.74% |     11.86% |      −2.12 pp |         0.43 |         0.58 |         −57% | [cadence](reports/cadence.md)                         |
+| Cadence (#1, baseline hold) | Annual lump sum $2,000                  | 1975–2026 |          9.66% |     11.93% |      −2.27 pp |         0.41 |         0.58 |         −56% | [cadence](reports/cadence.md)                         |
 
 ## Scenario families
 
@@ -81,7 +80,7 @@ Every scenario ever run is listed in [`scenarios/index.csv`](scenarios/index.csv
 | `fundamentals_picker`                         | Best revenue-growth + margin rank among the top 10 (SEC XBRL, point-in-time), 2012–2026: matches the #1 on return, modestly better Sharpe                   | [reports/fundamentals_picker.md](reports/fundamentals_picker.md) |
 | `rule_variants`                               | Partial trim (once / repeated), stop-and-rebuy on regaining #1, volatility-scaled stop: none beats the plain 25% stop; rebuying ex-leaders costs 0.7–1.3 pp | [reports/rule_variants.md](reports/rule_variants.md)             |
 | `breadth`                                     | #1 vs top-3 / top-10 / top-20 equal-weight on complete-data windows: returns peak at three names, Sharpe plateaus from three names on                       | [reports/breadth.md](reports/breadth.md)                         |
-| `cadence`                                     | Monthly DCA and annual lump sum ($2,000/yr per leg) vs quarterly: XIRRs move ≤0.15 pp, every ranking holds                               | [reports/cadence.md](reports/cadence.md)                         |
+| `cadence`                                     | Monthly DCA and annual lump sum ($2,000/yr per leg) vs quarterly: XIRRs move ≤0.15 pp, every ranking holds                                                  | [reports/cadence.md](reports/cadence.md)                         |
 | — (every family)                              | Sharpe, Sortino, downside deviation and max drawdown per leg next to XIRR (`results/<id>/risk.csv`, `results/risk_metrics.csv`)                             | [reports/risk_metrics.md](reports/risk_metrics.md)               |
 | —                                             | Phase 1 table corrections, known gaps, data caveats                                                                                                         | [reports/methodology.md](reports/methodology.md)                 |
 
@@ -92,7 +91,7 @@ Where the later scenario families overturned or sharpened what I believed after 
 1. **"From the mid-1990s the #1 became index-like."** I read the 1995–2026 tie (10.66% vs 10.68%) as the strategy settling into an index-like regime once the shaky pre-1996 data dropped out.
    - The [rolling windows](reports/rolling_windows.md) show no convergence at all. Windows starting in 1996–2008 lag by 2–7 pp, and those starting after 2009 lead by up to 17 pp. The 1995 tie is two regimes cancelling out.
    - The [risk metrics](reports/risk_metrics.md) show the tie was really a loss: 21% vs 15% volatility, a −76% drawdown, and 18 years under water.
-2. **"The #1 slot carries a quality or momentum edge."** The first report never asked whether *the largest* mattered or merely *a very large* company. It barely does:
+2. **"The #1 slot carries a quality or momentum edge."** The first report never asked whether _the largest_ mattered or merely _a very large_ company. It barely does:
    - The [placebo](reports/random_pick_placebo.md) puts the #1 at the 74th percentile of random mega-cap pickers, and below the median on Sharpe.
    - The runner-up did better than the #1 in every window ([alt pickers](reports/alt_pickers.md)), and three names beat one on both return and risk ([breadth](reports/breadth.md)).
 3. **"The trailing stop's edge is a tax illusion."** I expected realizing gains at 222 stops to erase its lead. The [tax model](reports/tax_drag.md) shows only about 0.2 pp of drag at 15%/32% (0.34 pp at the top rates): most gains are long-term, and the proceeds keep compounding in the index. What tax does shrink is its margin over the index.
