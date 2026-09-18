@@ -1,4 +1,4 @@
-"""Scenario summary metrics shared by scripts/run_scenarios.py and the notebook."""
+"""Scenario summary metrics shared by the scenario runner (sp500bt.run) and the notebook."""
 from __future__ import annotations
 
 from .engine import SimResult

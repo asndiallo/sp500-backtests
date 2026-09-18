@@ -1,0 +1,22 @@
+id = "corp_action_sensitivity"
+title = "AT&T 1984 breakup treatment"
+description = """
+Main result holds old AT&T through divestiture as a basket (IRS basis allocation).
+Variants: sell old AT&T at the 1983-12-30 close into the index; or write off the
+US West share (lower bound for its Qwest/CenturyLink path).
+"""
+
+[defaults]
+group = "corp_action_sensitivity"
+picker = "top1"
+start = "1975-01-01"
+
+[[runs]]
+id = "att_sold_at_divestiture_{rule}"
+corp_actions = { name = "att_sold_at_divestiture", price = 61.43 }
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "att_uswest_written_off_{rule}"
+corp_actions = { name = "att_uswest_writeoff", fraction = 0.089976 }
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]

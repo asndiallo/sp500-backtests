@@ -1,0 +1,22 @@
+id = "top10_ew"
+title = "Top-10 equal-weight vs #1, 2006-04-01 → 2026-01-02"
+description = """
+Each quarter the $500 is split equally across the 10 largest S&P 500 members.
+Window starts 2006-04-01: the first quarter whose top-10 list is COMPLETE
+(earlier lists miss delisted giants and would be survivorship-biased).
+"""
+
+[defaults]
+group = "top10"
+start = "2006-04-01"
+outputs = { events = true }
+
+[[runs]]
+id = "top10_ew_{rule}"
+picker = "top10_ew"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "top1_{rule}_from_2006"
+picker = "top1"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]

@@ -1,0 +1,38 @@
+id = "data_sensitivity"
+title = "How much the result depends on the confidence grades and the pre-1996 data"
+description = """
+Re-runs the #1 strategy with LOW rows switched to their alternate pick, with only
+graded rows buying the #1 (the rest go to the index), with every pre-1996 pick sent
+to the index, and from a 1996-01-01 start.
+"""
+
+[defaults]
+group = "data_sensitivity"
+start = "1975-01-01"
+
+[[runs]]
+id = "alt_on_LOW_rows_{rule}"
+picker = "top1_alt_on_low"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "only_HIGH_rows_buy_top1_{rule}"
+picker = { name = "confidence_gate", allowed = ["HIGH"] }
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "HIGH_MEDIUM_rows_buy_top1_{rule}"
+picker = { name = "confidence_gate", allowed = ["HIGH", "MEDIUM"] }
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "pre1996_rows_to_index_{rule}"
+picker = { name = "top1_index_before", before = "1996-01-01" }
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "top1_from_1996_{rule}"
+group = "window"
+picker = "top1"
+start = "1996-01-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]

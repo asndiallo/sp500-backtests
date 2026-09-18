@@ -8,7 +8,7 @@
 3. Yahoo spinoff pseudo-splits vs the documented distribution terms.
 4. Manual series (T_OLD / T_CORP) vs independent year-end prints.
 
-Writes results/price_sanity.csv and prints anything flagged.
+Writes results/data_quality/price_sanity.csv and prints anything flagged.
 Run:  python scripts/check_prices.py
 """
 from __future__ import annotations
@@ -19,7 +19,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from sp500bt.config import RESULTS_DIR, SOURCES_DIR  # noqa: E402
+from sp500bt.config import DATA_QUALITY_DIR, SOURCES_DIR  # noqa: E402
 from sp500bt.mcap import nominal_price  # noqa: E402
 from sp500bt.prices import load_yahoo_history  # noqa: E402
 
@@ -114,7 +114,7 @@ def spin_factors() -> list[dict]:
 def main() -> None:
     rows = anchors() + vendor_crosscheck() + spin_factors()
     df = pd.DataFrame(rows)
-    df.to_csv(RESULTS_DIR / "price_sanity.csv", index=False)
+    df.to_csv(DATA_QUALITY_DIR / "price_sanity.csv", index=False)
     pd.set_option("display.width", 250, "display.max_colwidth", 140)
     print(df[df.check != "cmc_implied_shares"].to_string(index=False))
     print("\nFlagged vendor cross-checks:")

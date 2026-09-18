@@ -1,0 +1,54 @@
+id = "top1_core"
+title = "#1 company, three rules, 1975–2026 and fresh 1995–2026 windows"
+description = """
+Quarterly $500 into the largest S&P 500 company at the previous quarter-end close,
+plus $500/quarter into the S&P 500 total-return index, valued 2026-01-02.
+The 1995 runs are fresh, independent backtests (start with $0 on 1995-01-01), not slices.
+"""
+
+[defaults]
+picker = "top1"
+group = "main"
+outputs = { events = true }
+start = "1975-01-01"
+
+# 1975-01-01 -> 2026-01-02
+[[runs]]
+id = "top1_{rule}"
+rules = ["baseline_hold",
+         { name = "trailing_stop", stop = 0.25 },           # sell a lot 25% below its peak (quarterly checks)
+         { name = "buy_the_dip", thresholds = [0.25, 0.50] }]  # top up at -25% / -50% from peak
+
+# fresh 1995-01-01 -> 2026-01-02
+[[runs]]
+id = "top1_{rule}_from_1995"
+group = "window_1995"
+start = "1995-01-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[analyses]]
+name = "attribution_by_confidence"
+params = { runs = ["top1_baseline_hold", "top1_trailing_stop_25", "top1_buy_the_dip_25_50"] }
+
+[[analyses]]
+name = "window_reconciliation"
+params = { cutoff = "1995-01-01", pairs = [
+    ["top1_baseline_hold_from_1995", "top1_baseline_hold"],
+    ["top1_trailing_stop_25_from_1995", "top1_trailing_stop_25"],
+    ["top1_buy_the_dip_25_50_from_1995", "top1_buy_the_dip_25_50"]] }
+
+[[analyses]]
+name = "growth_chart"
+params = { runs = ["top1_baseline_hold_from_1995", "top1_trailing_stop_25_from_1995", "top1_buy_the_dip_25_50_from_1995"], window = "1995–2026", file = "growth_1995_2026.png" }
+
+[[analyses]]
+name = "growth_chart"
+params = { runs = ["top1_baseline_hold", "top1_trailing_stop_25", "top1_buy_the_dip_25_50"], window = "1975–2026", file = "growth_1975_2026.png" }
+
+[[analyses]]
+name = "drawdown_chart"
+params = { runs = ["top1_baseline_hold_from_1995", "top1_trailing_stop_25_from_1995", "top1_buy_the_dip_25_50_from_1995"], window = "1995–2026", file = "drawdown_1995_2026.png", max_drawdown_file = "max_drawdown_1995_2026.csv" }
+
+[[analyses]]
+name = "rule_events_chart"
+params = { runs = ["top1_baseline_hold_from_1995", "top1_trailing_stop_25_from_1995", "top1_buy_the_dip_25_50_from_1995"], window = "1995–2026", file = "rule_events_1995_2026.png" }

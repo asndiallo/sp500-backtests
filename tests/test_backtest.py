@@ -86,6 +86,36 @@ def test_fresh_window_equals_subset_of_full_run():
         daily_values(fresh, "1995-01-01")
 
 
+# Verified values (committed results, 2026-09-18). Any refactor must reproduce them.
+GOLDEN_TOP1_CORE = {
+    "top1_baseline_hold": 2460375.313955369,
+    "top1_trailing_stop_25": 5200079.1552609075,
+    "top1_buy_the_dip_25_50": 5565831.850594893,
+    "top1_baseline_hold_from_1995": 442341.39449868375,
+    "top1_trailing_stop_25_from_1995": 488825.7341553997,
+    "top1_buy_the_dip_25_50_from_1995": 1078641.7903558128,
+}
+
+
+def test_scenario_configs_reproduce_verified_values():
+    from sp500bt.run import simulate_run
+    from sp500bt.scenario import load_family
+
+    fam = load_family("top1_core")
+    h, ca = load_top_holdings(), load_corporate_actions()
+    got = {r["id"]: simulate_run(r, h, ca, PX).final["strategy_value"] for r in fam.runs}
+    for run_id, expected in GOLDEN_TOP1_CORE.items():
+        assert abs(got[run_id] / expected - 1) < 1e-12, (run_id, got[run_id], expected)
+
+
+def test_scenario_manifest_in_sync():
+    from sp500bt.scenario import check_index, family_ids, load_family
+
+    assert check_index() == []
+    for fid in family_ids():
+        load_family(fid)  # every config parses and validates
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

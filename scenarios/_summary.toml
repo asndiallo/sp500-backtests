@@ -1,0 +1,50 @@
+# Cross-family comparison table (results/scenario_comparison.csv, charts/summary/).
+# Rows are read from results/<family>/runs.csv; nothing is re-simulated here.
+[[comparison]]
+label = "Baseline hold"
+window = "1975–2026"
+rule = "baseline_hold"
+family = "top1_core"
+run = "top1_baseline_hold"
+
+[[comparison]]
+label = "25% trailing stop → index"
+window = "1975–2026"
+rule = "trailing_stop_25"
+family = "top1_core"
+run = "top1_trailing_stop_25"
+
+[[comparison]]
+label = "Buy the dip −25%/−50%"
+window = "1975–2026"
+rule = "buy_the_dip_25_50"
+family = "top1_core"
+run = "top1_buy_the_dip_25_50"
+
+[[comparison]]
+label = "Baseline hold"
+window = "1995–2026"
+rule = "baseline_hold"
+family = "top1_core"
+run = "top1_baseline_hold_from_1995"
+
+[[comparison]]
+label = "25% trailing stop → index"
+window = "1995–2026"
+rule = "trailing_stop_25"
+family = "top1_core"
+run = "top1_trailing_stop_25_from_1995"
+
+[[comparison]]
+label = "Buy the dip −25%/−50%"
+window = "1995–2026"
+rule = "buy_the_dip_25_50"
+family = "top1_core"
+run = "top1_buy_the_dip_25_50_from_1995"
+
+[[comparison]]
+label = "Top-10 equal-weight, baseline hold"
+window = "2006–2026 (from 2006-04-01)"
+rule = "top10"
+family = "top10_ew"
+run = "top10_ew_baseline_hold"

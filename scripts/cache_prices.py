@@ -1,5 +1,5 @@
 """Warm the parquet price cache for every symbol in data/universe.csv (plus the
-index series) and write results/price_fetch_report.csv listing any failures.
+index series) and write results/data_quality/price_fetch_report.csv listing any failures.
 
 Nothing is dropped silently: a symbol that still fails after retries is listed
 in the report and must be fixed (corrected symbol / manual series) or logged as
@@ -16,7 +16,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from sp500bt.config import MANUAL_PRICES_DIR, RESULTS_DIR  # noqa: E402
+from sp500bt.config import DATA_QUALITY_DIR, MANUAL_PRICES_DIR  # noqa: E402
 from sp500bt.prices import load_yahoo_history  # noqa: E402
 from sp500bt.universe import load_universe  # noqa: E402
 
@@ -43,7 +43,7 @@ def main(retries: int = 4, pause: float = 1.5) -> None:
             print(f"FAILED {s}: {err}")
         time.sleep(pause)
     df = pd.DataFrame(report)
-    df.to_csv(RESULTS_DIR / "price_fetch_report.csv", index=False)
+    df.to_csv(DATA_QUALITY_DIR / "price_fetch_report.csv", index=False)
     print(df.status.value_counts().to_dict())
 
 
