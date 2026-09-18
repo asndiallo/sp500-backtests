@@ -1,4 +1,5 @@
-"""Cross-family artifacts: results/scenario_comparison.csv and charts/summary/.
+"""Cross-family artifacts: results/scenario_comparison.csv, results/risk_metrics.csv
+and charts/summary/.
 
 Rows are declared in scenarios/_summary.toml and read from each family's
 results/<family>/runs.csv, so the summary never re-simulates anything.
@@ -16,6 +17,10 @@ from .scenario import SCENARIOS_DIR
 
 COMPARISON_COLUMNS = ["scenario", "window", "stock_leg_invested", "stock_leg_final", "stock_leg_xirr",
                       "index_leg_invested", "index_leg_final", "index_leg_xirr", "combined_final", "combined_xirr"]
+RISK_COLUMNS = ["scenario", "window", "leg", "xirr", "twr_annualized", "volatility", "sharpe", "downside_deviation",
+                "sortino", "max_drawdown", "max_dd_peak", "max_dd_trough", "max_dd_recovery", "underwater_days",
+                "periods", "first_period", "last_period"]
+LEG_XIRR = {"stock": "strategy_xirr", "index": "index_xirr", "combined": "total_xirr"}
 
 
 def _load_summary_config() -> dict:
@@ -23,10 +28,25 @@ def _load_summary_config() -> dict:
         return tomllib.load(f)
 
 
-def _runs(family: str) -> pd.DataFrame:
+def _read(family: str, name: str) -> pd.DataFrame:
     # round_trip: the default fast parser can drop the last bit of a float; summaries must carry
     # exactly the values the engine produced
-    return pd.read_csv(ROOT / "results" / family / "runs.csv", float_precision="round_trip").set_index("scenario")
+    return pd.read_csv(ROOT / "results" / family / name, float_precision="round_trip")
+
+
+def _runs(family: str) -> pd.DataFrame:
+    return _read(family, "runs.csv").set_index("scenario")
+
+
+def risk_table() -> pd.DataFrame:
+    """Risk metrics of every leg of every comparison row, with the money-weighted XIRR alongside."""
+    rows = []
+    for spec in _load_summary_config()["comparison"]:
+        runs, risk = _runs(spec["family"]), _read(spec["family"], "risk.csv")
+        for _, r in risk[risk.scenario == spec["run"]].iterrows():
+            rows.append({**r.to_dict(), "scenario": spec["label"], "window": spec["window"],
+                         "xirr": runs.loc[spec["run"], LEG_XIRR[r.leg]]})
+    return pd.DataFrame(rows)[RISK_COLUMNS]
 
 
 def comparison_table() -> pd.DataFrame:
@@ -48,9 +68,14 @@ def build_summary(px: PriceBook | None = None) -> pd.DataFrame:
     all_runs = pd.concat([pd.read_csv(p, float_precision="round_trip").assign(family=p.parent.name)
                           for p in sorted((ROOT / "results").glob("*/runs.csv"))], ignore_index=True)
     all_runs.to_csv(ROOT / "results" / "all_runs.csv", index=False)
+    risk = risk_table()
+    risk.to_csv(ROOT / "results" / "risk_metrics.csv", index=False)
+    all_risk = pd.concat([pd.read_csv(p).assign(family=p.parent.name)
+                          for p in sorted((ROOT / "results").glob("*/risk.csv"))], ignore_index=True)
+    all_risk.to_csv(ROOT / "results" / "all_risk.csv", index=False)
     out = ROOT / "charts" / "summary"
     out.mkdir(parents=True, exist_ok=True)
     charts.xirr_bars(table, out / "xirr_by_window.png")
-    print(f"wrote results/scenario_comparison.csv ({len(table)} rows), results/all_runs.csv "
-          f"({len(all_runs)} runs) and charts/summary/")
+    print(f"wrote results/scenario_comparison.csv ({len(table)} rows), risk_metrics.csv ({len(risk)} rows), "
+          f"all_runs.csv ({len(all_runs)} runs), all_risk.csv and charts/summary/")
     return table

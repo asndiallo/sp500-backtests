@@ -5,7 +5,7 @@
     python -m sp500bt.run --summary                        cross-family tables and charts
     python -m sp500bt.run --list                           manifest (scenarios/index.csv)
 
-Outputs go to results/<family_id>/ (runs.csv, events/, analysis CSVs) and
+Outputs go to results/<family_id>/ (runs.csv, risk.csv, events/, analysis CSVs) and
 charts/<family_id>/; cross-family artifacts to results/ and charts/summary/.
 """
 from __future__ import annotations
@@ -22,7 +22,9 @@ from .engine import PriceBook, SimResult, simulate
 from .holdings import load_top_holdings
 from .registry import CORP_ACTIONS, PICKERS, RULES, build
 from .report import summarize
+from .risk import risk_rows
 from .scenario import Family, check_index, family_ids, load_family, load_index, spec_label
+from .timeseries import daily_values
 
 
 @dataclass
@@ -34,6 +36,13 @@ class Context:
     sims: dict[str, SimResult] = field(default_factory=dict)
     runs: dict[str, dict] = field(default_factory=dict)
     summary: pd.DataFrame | None = None
+    _daily: dict[str, pd.DataFrame] = field(default_factory=dict, repr=False)
+
+    def daily(self, run_id: str) -> pd.DataFrame:
+        """Daily strategy / index-leg values of a run (replayed once, then cached)."""
+        if run_id not in self._daily:
+            self._daily[run_id] = daily_values(self.sims[run_id], self.runs[run_id]["start"])
+        return self._daily[run_id]
 
 
 def simulate_run(run: dict, holdings: pd.DataFrame, ca: pd.DataFrame, px: PriceBook) -> SimResult:
@@ -68,6 +77,10 @@ def run_family(family_id: str, px: PriceBook | None = None, quiet: bool = False)
     if rows:
         ctx.summary = pd.DataFrame(rows)
         ctx.summary.to_csv(fam.results_dir / "runs.csv", index=False)
+        risk = [row for rid, run in ctx.runs.items() if run.get("outputs", {}).get("risk", True)
+                for row in risk_rows(ctx.sims[rid], ctx.daily(rid), rid)]
+        if risk:
+            pd.DataFrame(risk).to_csv(fam.results_dir / "risk.csv", index=False)
     for a in fam.analyses:
         if a["name"] not in ANALYSES:
             raise KeyError(f"{fam.path}: unknown analysis {a['name']!r}; registered: {sorted(ANALYSES)}")

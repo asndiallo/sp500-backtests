@@ -4,7 +4,7 @@ Browser-only extractions (Morgan Stanley exhibit decode, EDGAR tables, AT&T
 annual reports) are documented in data/sources/README.md; their outputs are
 committed as CSVs and are not regenerated here.
 
-Run:  python scripts/fetch_sources.py [wikipedia|sp500|cmc|shiller|att|all]
+Run:  python scripts/fetch_sources.py [wikipedia|sp500|cmc|shiller|att|tbill|all]
 """
 from __future__ import annotations
 
@@ -122,6 +122,23 @@ def fetch_shiller() -> None:
     SHILLER_XLS.write_bytes(r.content)
 
 
+FRED_TB3MS = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=TB3MS"
+
+
+def fetch_tbill() -> pd.DataFrame:
+    """3-month Treasury bill secondary-market rate (FRED TB3MS, monthly, % p.a.) -- the
+    risk-free rate for Sharpe / Sortino ratios."""
+    r = requests.get(FRED_TB3MS, timeout=60)  # FRED stalls on browser-like User-Agents
+    r.raise_for_status()
+    df = pd.read_csv(io.StringIO(r.text))
+    df.columns = ["date", "tb3ms_pct"]
+    with open(SOURCES_DIR / "fred_tb3ms.csv", "w") as f:
+        f.write(f"# FRED TB3MS: 3-Month Treasury Bill Secondary Market Rate, monthly average, percent p.a. "
+                f"(Board of Governors of the Federal Reserve System, public domain). Source: {FRED_TB3MS}\n")
+        df.to_csv(f, index=False)
+    return df
+
+
 # historicalstockinfo.com AT&T tables ------------------------------------------------------
 HSI_PRICES = "https://historicalstockinfo.com/att-corp-stock-prices-table/"
 HSI_DIVS = "https://historicalstockinfo.com/att-corp-dividends-reference-sheet/"
@@ -166,7 +183,7 @@ def fetch_att_prices() -> pd.DataFrame:
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "all"
     jobs = {"wikipedia": fetch_wikipedia_ft, "sp500": fetch_sp500_constituents, "cmc": fetch_cmc,
-            "shiller": fetch_shiller, "att": fetch_att_prices}
+            "shiller": fetch_shiller, "att": fetch_att_prices, "tbill": fetch_tbill}
     for name, fn in jobs.items():
         if what in (name, "all"):
             print(f"fetching {name} ...")

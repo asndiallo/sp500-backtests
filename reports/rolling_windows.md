@@ -26,6 +26,23 @@ By start era (mean spread / share of windows where the #1 beat the index):
 | 1996–2008 | −3.7 pp / 2% | −2.1 pp / 25% | −1.0 pp / 41% |
 | 2009 onward | +10.5 pp / 90% | +6.3 pp / 100% (9 windows) | — |
 
+**Risk-adjusted spread.** `windows.csv` also stores each window's Sharpe, Sortino and max drawdown for both legs (monthly returns vs 3-month T-bills; [definitions](risk_metrics.md)):
+
+| Window length | Mean Sharpe spread (#1 − index) | #1 had the higher Sharpe | #1 beat on XIRR but **not** on Sharpe | #1's max drawdown deeper than the index's |
+|---|---:|---:|---:|---:|
+| 10 years | −0.20 | 22% (37 of 165) | 16% | 76% |
+| 15 years | −0.19 | 10% (14 of 145) | 26% | 66% |
+| 20 years | −0.17 | 0.8% (1 of 125) | 30% | 62% |
+
+By start era, the mean Sharpe spread was:
+
+| Starts in | 10-year | 15-year | 20-year |
+|---|---:|---:|---:|
+| 1975–84 | −0.32 | −0.29 | −0.19 |
+| 1985–95 | −0.25 | −0.14 | −0.14 |
+| 1996–2008 | −0.15 | −0.17 | −0.17 |
+| 2009 onward | −0.05 | −0.10 | — |
+
 **What this says.** The rolling windows **undermine** the reading that "from the mid-1990s the #1 pick was roughly index-like" is a durable property. The spread doesn't narrow toward zero after 1995. It swings between long regimes:
 - **Starts in 1975–84 lag**, because IBM and pre-breakup AT&T were bought near their peaks. The 10-year windows starting 1982–83 lag by up to 23 pp.
 - **Starts in 1985–95 are slightly ahead**, because the 10- and 15-year windows catch GE's 1990s run.
@@ -38,3 +55,4 @@ The single 1995–2026 window ties (10.66% vs 10.68%) because a decade of bad pi
 - **The #1 strategy is a regime bet, not an index substitute.** Over most 10–20-year horizons it lagged the index, typically by 1–4 pp, and 30–36% of windows beat it.
 - **Whether it wins depends mostly on which mega-cap era the window catches.**
 - **"Index-like over 1995–2026" is a true statement about that one window, not a property of the strategy.**
+- **On a risk-adjusted basis there is no regime in which the #1 reliably wins.** Even the 2009+ windows, which beat the index by about 10 pp of XIRR, have a slightly *lower* average Sharpe (−0.05), because one or two stocks are far more volatile than 500. Only 1 of 125 twenty-year windows (start 1991-04-01, +0.008) had a better Sharpe than the index. Among 20-year windows, all but that one XIRR win came with a lower Sharpe: the extra return was paid for with extra risk.

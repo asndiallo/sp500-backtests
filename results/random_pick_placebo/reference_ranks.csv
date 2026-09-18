@@ -1,3 +1,3 @@
-label,run,strategy_xirr,percentile_rank,z_score
-#1 picker (baseline hold),top10_ew/top1_baseline_hold_from_2006,0.15526100557795824,80.4,0.931486393505426
-Top-10 equal-weight (baseline hold),top10_ew/top10_ew_baseline_hold,0.14671210528376866,54.1,0.08864287198731799
+label,run,strategy_xirr,percentile_rank,z_score,sharpe,sharpe_percentile_rank,max_drawdown,max_drawdown_percentile_rank
+#1 picker (baseline hold),top10_ew/top1_baseline_hold_from_2006,0.15526100557795824,80.4,0.931486393505426,0.6742210060240588,42.5,-0.3729865505496267,95.89999999999999
+Top-10 equal-weight (baseline hold),top10_ew/top10_ew_baseline_hold,0.14671210528376866,54.1,0.08864287198731799,0.7189081738662448,62.4,-0.5136372005331624,55.1

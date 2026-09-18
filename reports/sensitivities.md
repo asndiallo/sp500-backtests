@@ -6,21 +6,24 @@
 
 The confidence grades and their share of ending value are in [top1_core](top1_core.md#how-much-of-the-conclusion-rests-on-shaky-data).
 
-Sensitivity of each rule's strategy-leg XIRR (and ending value):
+Each cell shows the strategy-leg XIRR (ending value), then the Sharpe ratio, then the max drawdown of the leg's time-weighted unit value ([risk definitions](risk_metrics.md)):
 
-| Sensitivity                                      |   Baseline hold | Trailing stop 25% |     Buy the dip |
-| ------------------------------------------------ | --------------: | ----------------: | --------------: |
-| Main result (as built)                           |  9.73% ($2.46M) |   11.72% ($5.20M) | 10.28% ($5.57M) |
-| LOW rows switched to their alt pick              |  9.69% ($2.43M) |   11.63% ($5.02M) | 10.33% ($5.83M) |
-| LOW rows → index instead of #1                   | 10.06% ($2.78M) |   11.66% ($5.09M) | 10.46% ($5.79M) |
-| MEDIUM+LOW rows → index                          | 11.56% ($4.90M) |   11.79% ($5.33M) | 11.54% ($5.97M) |
-| All pre-1996 rows → index                        | 11.88% ($5.52M) |   11.87% ($5.51M) | 11.90% ($6.15M) |
-| Window 1996-01-01 onward only (index leg 10.66%) |          10.85% |            10.63% |          11.63% |
+| Sensitivity                                                                |                 Baseline hold |             Trailing stop 25% |                   Buy the dip |
+| -------------------------------------------------------------------------- | ----------------------------: | ----------------------------: | ----------------------------: |
+| Main result (as built)                                                     |  9.73% ($2.46M) · 0.43 · −57% | 11.72% ($5.20M) · 0.58 · −53% | 10.28% ($5.57M) · 0.42 · −58% |
+| LOW rows switched to their alt pick                                        |  9.69% ($2.43M) · 0.42 · −57% | 11.63% ($5.02M) · 0.57 · −53% | 10.33% ($5.83M) · 0.40 · −58% |
+| LOW rows → index instead of #1                                             | 10.06% ($2.78M) · 0.46 · −55% | 11.66% ($5.09M) · 0.58 · −54% | 10.46% ($5.79M) · 0.43 · −57% |
+| MEDIUM+LOW rows → index                                                    | 11.56% ($4.90M) · 0.57 · −53% | 11.79% ($5.33M) · 0.58 · −55% | 11.54% ($5.97M) · 0.55 · −50% |
+| All pre-1996 rows → index                                                  | 11.88% ($5.52M) · 0.58 · −56% | 11.87% ($5.51M) · 0.58 · −55% | 11.90% ($6.15M) · 0.58 · −57% |
+| Old AT&T sold at the 1983-12-30 close                                      | 10.29% ($3.04M) · 0.44 · −53% | 11.41% ($4.63M) · 0.55 · −53% | 10.64% ($6.05M) · 0.41 · −55% |
+| US West share written off                                                  |  9.64% ($2.38M) · 0.42 · −57% | 11.63% ($5.02M) · 0.57 · −53% | 10.24% ($5.48M) · 0.41 · −58% |
+| Window 1996-01-01 onward only (index leg 10.66%, Sharpe 0.58, max DD −55%) |          10.85% · 0.50 · −74% |          10.63% · 0.61 · −53% |          11.63% · 0.51 · −75% |
 
 Reading it:
 
 - **The 11 LOW rows barely matter to _which_ stock was picked.** Replacing each with its runner-up moves results by ≤0.2 pp, because the contested pairs (IBM vs AT&T in 1977–82, Exxon vs IBM in 1990, GE vs AT&T Corp in 1994–95) mostly had similar subsequent paths.
 - **The underperformance is an era result, and that era is where the data is weakest.** The 84 pre-1996 contributions ($42,000) ended at about $3.1M _less_ than the same money in the index. The main culprits are IBM lots bought in 1983–1990 (IBM fell ~75% from its 1987 peak to 1993) and the AT&T basket (below). In the better-sourced 1996–2026 period, the #1 strategy was roughly index-like.
+- **Risk moves with return.** The Sharpe rankings follow the XIRR rankings in every row. Once the pre-1996 picks go to the index, all three rules converge on the index's Sharpe (0.58). In the 1996+ window the baseline's drawdown is −74%, against −55% for the index.
 - **Whether a MEDIUM row picked the right #1 barely matters; how the pre-1996 picks performed matters a lot.** If you distrust the 1975–1995 estimates entirely, the defensible conclusion is the 1996+ one: owning the #1 was about as good as owning the index.
 
 ## Corporate-action and continuity decisions that moved the result

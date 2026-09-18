@@ -12,8 +12,9 @@ import pandas as pd
 from . import charts
 from .config import CONTRIB_AMOUNT
 from .engine import attribution, contribution_dates
+from .metrics import drawdown, max_drawdown
 from .scenario import spec_label
-from .timeseries import daily_values, drawdown, strategy_flows, subset_since, unit_value
+from .timeseries import index_flows, strategy_flows, subset_since, unit_value
 
 ANALYSES: dict[str, Callable] = {}
 
@@ -23,13 +24,6 @@ def analysis(name: str):
         ANALYSES[name] = fn
         return fn
     return deco
-
-
-def _daily(ctx, run_id: str) -> pd.DataFrame:
-    cache = ctx.__dict__.setdefault("_daily", {})
-    if run_id not in cache:
-        cache[run_id] = daily_values(ctx.sims[run_id], ctx.runs[run_id]["start"])
-    return cache[run_id]
 
 
 def _by_rule(ctx, run_ids: list[str]) -> dict[str, str]:
@@ -85,38 +79,37 @@ def _cum_contrib(start, idx):
 @analysis("growth_chart")
 def growth_chart(ctx, runs: list[str], window: str, file: str):
     ctx.family.charts_dir.mkdir(parents=True, exist_ok=True)
-    values = {rule: _daily(ctx, rid) for rule, rid in _by_rule(ctx, runs).items()}
+    values = {rule: ctx.daily(rid) for rule, rid in _by_rule(ctx, runs).items()}
     first = next(iter(values.values()))
     charts.growth_chart(values, window, ctx.family.charts_dir / file,
                         _cum_contrib(ctx.runs[runs[0]]["start"], first.index))
 
 
-def _drawdowns(ctx, runs: list[str]) -> dict[str, pd.Series]:
-    by_rule = _by_rule(ctx, runs)
-    dd = {rule: drawdown(unit_value(_daily(ctx, rid)["strategy"], strategy_flows(ctx.sims[rid])))
-          for rule, rid in by_rule.items()}
-    ref = ctx.sims[runs[0]]
-    idx_flows = ref.ledger.query("leg == 'index'").groupby("date")["amount"].sum()
-    dd["index"] = drawdown(unit_value(_daily(ctx, runs[0])["index_leg"], idx_flows))
-    return dd
+def _navs(ctx, runs: list[str]) -> dict[str, pd.Series]:
+    """Stock-leg unit value per rule, plus the index leg of the first run."""
+    navs = {rule: unit_value(ctx.daily(rid)["strategy"], strategy_flows(ctx.sims[rid]))
+            for rule, rid in _by_rule(ctx, runs).items()}
+    navs["index"] = unit_value(ctx.daily(runs[0])["index_leg"], index_flows(ctx.sims[runs[0]]))
+    return navs
 
 
 @analysis("drawdown_chart")
 def drawdown_chart(ctx, runs: list[str], window: str, file: str, max_drawdown_file: str | None = None):
     ctx.family.charts_dir.mkdir(parents=True, exist_ok=True)
-    dd = _drawdowns(ctx, runs)
+    navs = _navs(ctx, runs)
     events = {rule: ctx.sims[rid].events for rule, rid in _by_rule(ctx, runs).items()}
-    charts.drawdown_chart(dd, events, window, ctx.family.charts_dir / file)
+    charts.drawdown_chart({r: drawdown(n) for r, n in navs.items()}, events, window, ctx.family.charts_dir / file)
     if max_drawdown_file:
-        maxdd = {r: (s.min(), s.idxmin().date()) for r, s in dd.items()}
-        pd.DataFrame(maxdd, index=["max_drawdown", "date"]).T.to_csv(ctx.family.results_dir / max_drawdown_file)
+        mdd = {r: max_drawdown(n) for r, n in navs.items()}
+        pd.DataFrame({r: (m["max_drawdown"], m["trough"].date()) for r, m in mdd.items()},
+                     index=["max_drawdown", "date"]).T.to_csv(ctx.family.results_dir / max_drawdown_file)
 
 
 @analysis("rule_events_chart")
 def rule_events_chart(ctx, runs: list[str], window: str, file: str):
     ctx.family.charts_dir.mkdir(parents=True, exist_ok=True)
     by_rule = _by_rule(ctx, runs)
-    values = {rule: _daily(ctx, rid) for rule, rid in by_rule.items()}
+    values = {rule: ctx.daily(rid) for rule, rid in by_rule.items()}
     events = {rule: ctx.sims[rid].events for rule, rid in by_rule.items()}
     charts.event_timeline(values, events, window, ctx.family.charts_dir / file)
 
@@ -130,6 +123,7 @@ def random_pick_placebo(ctx, n_sims: int, base_seed: int, start: str, rule: str 
     from .engine import simulate
     from .registry import PICKERS, RULES, build
     from .report import summarize
+    from .risk import headline_risk
 
     rows = []
     for i in range(n_sims):
@@ -143,7 +137,8 @@ def random_pick_placebo(ctx, n_sims: int, base_seed: int, start: str, rule: str 
         rows.append({"sim": i, "seed": seed, "strategy_xirr": s["strategy_xirr"], "strategy_value": s["strategy_value"],
                      "index_xirr": s["index_xirr"], "spread_vs_index": s["strategy_xirr"] - s["index_xirr"],
                      "distinct_tickers": len(set(picks)),
-                     "share_quarters_drew_top1": sum(p == t for p, t in zip(picks, top1, strict=True)) / len(picks)})
+                     "share_quarters_drew_top1": sum(p == t for p, t in zip(picks, top1, strict=True)) / len(picks),
+                     **headline_risk(res, start)})
     sims = pd.DataFrame(rows)
     out = ctx.family.results_dir
     sims.to_csv(out / "sims.csv", index=False)
@@ -152,19 +147,30 @@ def random_pick_placebo(ctx, n_sims: int, base_seed: int, start: str, rule: str 
              "p05": x.quantile(0.05), "p25": x.quantile(0.25), "p75": x.quantile(0.75), "p95": x.quantile(0.95),
              "min": x.min(), "max": x.max(), "index_xirr": sims.index_xirr.iloc[0],
              "share_runs_beating_index": float((sims.spread_vs_index > 0).mean())}
+    for k in ("stock_sharpe", "stock_sortino", "stock_max_drawdown"):
+        stats |= {f"{k}_mean": sims[k].mean(), f"{k}_p05": sims[k].quantile(0.05),
+                  f"{k}_median": sims[k].median(), f"{k}_p95": sims[k].quantile(0.95)}
+    stats |= {"index_sharpe": sims.index_sharpe.iloc[0], "index_max_drawdown": sims.index_max_drawdown.iloc[0],
+              "share_runs_sharpe_above_index": float((sims.stock_sharpe > sims.index_sharpe).mean())}
     refs = []
     for ref in reference or []:
-        runs = pd.read_csv(ctx.family.results_dir.parent / ref["family"] / "runs.csv",
-                           float_precision="round_trip").set_index("scenario")
+        fam_dir = ctx.family.results_dir.parent / ref["family"]
+        runs = pd.read_csv(fam_dir / "runs.csv", float_precision="round_trip").set_index("scenario")
+        risk = pd.read_csv(fam_dir / "risk.csv").query("leg == 'stock'").set_index("scenario").loc[ref["run"]]
         v = float(runs.loc[ref["run"], "strategy_xirr"])
         refs.append({"label": ref["label"], "run": f"{ref['family']}/{ref['run']}", "strategy_xirr": v,
-                     "percentile_rank": float((x < v).mean() * 100), "z_score": (v - stats["mean"]) / stats["std"]})
+                     "percentile_rank": float((x < v).mean() * 100), "z_score": (v - stats["mean"]) / stats["std"],
+                     "sharpe": risk.sharpe,
+                     "sharpe_percentile_rank": float((sims.stock_sharpe < risk.sharpe).mean() * 100),
+                     "max_drawdown": risk.max_drawdown,
+                     "max_drawdown_percentile_rank": float((sims.stock_max_drawdown < risk.max_drawdown).mean() * 100)})
     pd.DataFrame([stats]).to_csv(out / "distribution_summary.csv", index=False)
     pd.DataFrame(refs).to_csv(out / "reference_ranks.csv", index=False)
     ctx.family.charts_dir.mkdir(parents=True, exist_ok=True)
     charts.placebo_histogram(sims, stats, refs, ctx.family.charts_dir / "xirr_distribution.png")
     print(f"  placebo: mean {stats['mean']:.2%} median {stats['median']:.2%} p5 {stats['p05']:.2%} "
-          f"p95 {stats['p95']:.2%}; " + "; ".join(f"{r['label']} at P{r['percentile_rank']:.0f}" for r in refs))
+          f"p95 {stats['p95']:.2%}; " + "; ".join(f"{r['label']} at P{r['percentile_rank']:.0f} "
+                                                  f"(Sharpe P{r['sharpe_percentile_rank']:.0f})" for r in refs))
 
 
 @analysis("tax_comparison")
@@ -212,6 +218,7 @@ def rolling_windows(ctx, lengths: list[int], first_start: str, last_end: str,
     from .engine import simulate
     from .registry import PICKERS, RULES, build
     from .report import summarize
+    from .risk import headline_risk
 
     rows = []
     for L in lengths:
@@ -222,9 +229,11 @@ def rolling_windows(ctx, lengths: list[int], first_start: str, last_end: str,
             m = summarize(res)
             rows.append({"length_years": L, "start": s.date(), "valued_at": end.date(),
                          "contributions": m["contributions"], "strategy_xirr": m["strategy_xirr"],
-                         "index_xirr": m["index_xirr"], "spread": m["strategy_xirr"] - m["index_xirr"]})
+                         "index_xirr": m["index_xirr"], "spread": m["strategy_xirr"] - m["index_xirr"],
+                         **headline_risk(res, s)})
         print(f"  {L}-year windows done ({sum(r['length_years'] == L for r in rows)})")
     w = pd.DataFrame(rows)
+    w["sharpe_spread"] = w.stock_sharpe - w.index_sharpe
     w.to_csv(ctx.family.results_dir / "windows.csv", index=False)
     era = pd.to_datetime(w.start) >= pd.Timestamp(era_split)
     groups = [("all", w)] + [(f"start < {era_split}", w[~era]), (f"start >= {era_split}", w[era])]
@@ -238,7 +247,10 @@ def rolling_windows(ctx, lengths: list[int], first_start: str, last_end: str,
                          "median_spread": g.spread.median(), "min_spread": g.spread.min(), "max_spread": g.spread.max(),
                          "share_beat_index": float((g.spread > 0).mean()),
                          f"share_lagged_by_more_than_{lag_threshold:.0%}": float((g.spread < -lag_threshold).mean()),
-                         "share_within_1pp": float((g.spread.abs() <= 0.01).mean())})
+                         "share_within_1pp": float((g.spread.abs() <= 0.01).mean()),
+                         "mean_sharpe_spread": g.sharpe_spread.mean(),
+                         "share_sharpe_above_index": float((g.sharpe_spread > 0).mean()),
+                         "share_max_dd_deeper_than_index": float((g.stock_max_drawdown < g.index_max_drawdown).mean())})
     pd.DataFrame(summ).to_csv(ctx.family.results_dir / "summary.csv", index=False)
     ctx.family.charts_dir.mkdir(parents=True, exist_ok=True)
     charts.rolling_spread(w, lengths, lag_threshold, era_split, ctx.family.charts_dir / "spread_by_start.png")

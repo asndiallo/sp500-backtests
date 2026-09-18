@@ -13,8 +13,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from sp500bt.corporate_actions import load_corporate_actions  # noqa: E402
 from sp500bt.engine import RULES, PriceBook, contribution_dates, simulate  # noqa: E402
 from sp500bt.holdings import load_top_holdings, row_on, top1_picker  # noqa: E402
-from sp500bt.metrics import xirr  # noqa: E402
-from sp500bt.timeseries import daily_values, subset_since  # noqa: E402
+from sp500bt.metrics import (  # noqa: E402
+    downside_deviation,
+    max_drawdown,
+    periodic_returns,
+    sharpe_ratio,
+    sortino_ratio,
+    xirr,
+)
+from sp500bt.timeseries import daily_values, leg_navs, subset_since, unit_value  # noqa: E402
 
 PX = PriceBook()
 END = pd.Timestamp("2026-01-02")
@@ -23,6 +30,45 @@ END = pd.Timestamp("2026-01-02")
 def test_xirr_known_case():
     flows = pd.Series({pd.Timestamp("2020-01-01"): -1000.0, pd.Timestamp("2021-01-01"): 1100.0})
     assert abs(xirr(flows) - 0.0998) < 5e-4  # 366-day year -> slightly under 10%
+
+
+def test_risk_metrics_hand_computed():
+    nav = pd.Series([1.0, 1.2, 0.9, 0.6, 1.3, 1.1],
+                    index=pd.to_datetime(["2020-01-02", "2020-01-31", "2020-02-28", "2020-03-31", "2020-04-30",
+                                          "2020-05-04"]))
+    mdd = max_drawdown(nav)
+    assert abs(mdd["max_drawdown"] + 0.5) < 1e-12  # 1.2 -> 0.6
+    assert mdd["peak"] == pd.Timestamp("2020-01-31") and mdd["trough"] == pd.Timestamp("2020-03-31")
+    assert mdd["recovery"] == pd.Timestamp("2020-04-30") and mdd["underwater_days"] == 90
+    r = periodic_returns(nav, "ME")  # May is a 1-day stub and is dropped
+    assert list(r.round(10)) == [0.2, -0.25, round(0.6 / 0.9 - 1, 10), round(1.3 / 0.6 - 1, 10)]
+    rf = 0.001
+    ex = r - rf
+    assert abs(sharpe_ratio(r, rf, 12) - ex.mean() / ex.std(ddof=1) * 12 ** 0.5) < 1e-12
+    dd = ((ex.clip(upper=0) ** 2).sum() / 4) ** 0.5 * 12 ** 0.5  # averaged over ALL periods
+    assert abs(downside_deviation(r, rf, 12) - dd) < 1e-12
+    assert abs(sortino_ratio(r, rf, 12) - ex.mean() * 12 / dd) < 1e-12
+
+
+def test_unit_value_ignores_contributions():
+    """Doubling the money in a flat market is not a return."""
+    idx = pd.bdate_range("2020-01-01", periods=4)
+    values = pd.Series([100.0, 110.0, 220.0, 198.0], index=idx)  # +10%, then +100 contributed, then -10%
+    nav = unit_value(values, pd.Series({idx[0]: 100.0, idx[2]: 110.0}))
+    assert list(nav.round(12)) == [1.0, 1.1, 1.1, 0.99]
+
+
+def test_leg_navs_reconcile_to_engine():
+    """The combined NAV must sit between the legs' NAVs each day (it is their value-weighted mix)."""
+    res = simulate(top1_picker, RULES["baseline_hold"], load_top_holdings(), load_corporate_actions(),
+                   start="2015-01-01", prices=PX)
+    navs = leg_navs(res, daily_values(res, "2015-01-01"))
+    r = {k: v.pct_change().dropna() for k, v in navs.items()}
+    lo = pd.concat([r["stock"], r["index"]], axis=1).min(axis=1) - 1e-12
+    hi = pd.concat([r["stock"], r["index"]], axis=1).max(axis=1) + 1e-12
+    inside = (r["combined"] >= lo) & (r["combined"] <= hi)
+    flow_days = res.ledger.date.unique()
+    assert inside[~inside.index.isin(flow_days)].all()
 
 
 def test_point_in_time_lookup():

@@ -7,7 +7,7 @@ date) on a business-day grid and prices it with the same total-return series.
 
 A DCA portfolio's dollar value keeps rising with new money, which hides losses.
 ``unit_value`` strips external cashflows out (time-weighted return index), so
-``drawdown`` measures what the stock leg itself lost from its peak.
+``sp500bt.metrics.drawdown`` measures what the stock leg itself lost from its peak.
 """
 from __future__ import annotations
 
@@ -25,7 +25,9 @@ def daily_values(res: SimResult, start) -> pd.DataFrame:
     ``index_leg``) from ``start`` to the valuation date. Manual month-end series
     (old AT&T, AT&T Corp) are forward-filled between prints."""
     pos = res.positions
-    grid = pd.bdate_range(start, res.end).union(pd.DatetimeIndex(pos.date.unique()))
+    # the valuation date is always on the grid: a window can end on a weekend on which a
+    # manual month-end series (e.g. T_CORP 1985-03-31) has a print the engine marks at
+    grid = pd.bdate_range(start, res.end).union(pd.DatetimeIndex(pos.date.unique())).union([res.end])
     grid = grid[(grid >= pd.Timestamp(start)) & (grid <= res.end)]
     out = {}
     for leg, name in (("strategy", "strategy"), ("index_leg", "index_leg")):
@@ -60,13 +62,22 @@ def unit_value(values: pd.Series, flows: pd.Series) -> pd.Series:
     return pd.Series(nav, index=values.index, dtype=float)
 
 
-def drawdown(nav: pd.Series) -> pd.Series:
-    return nav / nav.cummax() - 1.0
-
-
 def strategy_flows(res: SimResult) -> pd.Series:
     led = res.ledger[res.ledger.leg.str.startswith("stock")]
     return led.groupby("date")["amount"].sum()
+
+
+def index_flows(res: SimResult) -> pd.Series:
+    return res.ledger[res.ledger.leg == "index"].groupby("date")["amount"].sum()
+
+
+def leg_navs(res: SimResult, daily: pd.DataFrame) -> dict[str, pd.Series]:
+    """Time-weighted unit values of the stock leg (``strategy``, incl. index money its
+    rule moved there), the index leg and the combined portfolio."""
+    s_flows, i_flows = strategy_flows(res), index_flows(res)
+    return {"stock": unit_value(daily["strategy"], s_flows),
+            "index": unit_value(daily["index_leg"], i_flows),
+            "combined": unit_value(daily["strategy"] + daily["index_leg"], s_flows.add(i_flows, fill_value=0.0))}
 
 
 def subset_since(res: SimResult, cutoff, px: PriceBook, index_ticker=INDEX_TICKER) -> dict:
