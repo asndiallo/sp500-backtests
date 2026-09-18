@@ -120,6 +120,22 @@ def test_stop_and_rebuy_conserves_value():
         assert abs(never.final["total"] - plain.final["total"]) < 1e-6
 
 
+def test_top20_lists_extend_top10():
+    """Top-20 ranks 1-10 equal the COMPLETE top-10 list; topn_ew(3) weights the first three."""
+    from sp500bt.config import TOP20_CSV
+    from sp500bt.registry import PICKERS, build
+
+    h = load_top_holdings()
+    t20 = pd.read_csv(TOP20_CSV, parse_dates=["date"]).query("top20_status == 'COMPLETE'")
+    merged = t20.merge(h[["date", "top10_tickers"]], on="date")
+    assert len(merged) == len(t20) > 60
+    assert (merged.top20_tickers.str.split(",").str[:10].str.join(",") == merged.top10_tickers).all()
+    top3 = build(PICKERS, {"name": "topn_ew", "n": 3}, "picker")
+    row, picks = top3("2013-01-01", h)
+    assert [t for t, _ in picks] == row["top10_tickers"].split(",")[:3] and all(w == 1 / 3 for _, w in picks)
+    assert "GOOGL" in row["top10_tickers"]  # the 2008-2014 Google gap is fixed
+
+
 def test_point_in_time_lookup():
     h = load_top_holdings()
     assert row_on("1975-02-15", h).top1_ticker == row_on("1975-01-01", h).top1_ticker

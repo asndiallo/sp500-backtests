@@ -139,6 +139,31 @@ def _ranks_ew(first: int = 2, last: int = 5):
     return picker
 
 
+@register(PICKERS, "topn_ew")
+def _topn_ew(n: int = 3):
+    """Equal weight across the n largest S&P 500 members: n <= 10 from the Phase 1 top-10 list
+    (COMPLETE from 2006-04-01), n <= 20 from data/top20_by_quarter.csv (COMPLETE from
+    2009-04-01). Raises on any quarter whose list is not COMPLETE."""
+    if n > 20:
+        raise ValueError("lists are built to rank 20")
+    top20 = None
+    if n > 10:
+        from .config import TOP20_CSV
+        top20 = pd.read_csv(TOP20_CSV, parse_dates=["date"]).set_index("date")
+
+    def picker(date, holdings):
+        row = row_on(date, holdings)
+        if top20 is None:
+            names = _complete_top10(row)[:n]
+        else:
+            r20 = top20.loc[row["date"]]
+            if r20.top20_status != "COMPLETE":
+                raise ValueError(f"top-20 list for {row['date'].date()} is {r20.top20_status}")
+            names = r20.top20_tickers.split(",")[:n]
+        return row, [(t, 1.0 / len(names)) for t in names]
+    return picker
+
+
 @register(PICKERS, "fundamental_rank")
 def _fundamental_rank(growth_weight: float = 0.5, margin_weight: float = 0.5, max_age_days: int = 400,
                       min_coverage: int = 10):

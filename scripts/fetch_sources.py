@@ -4,7 +4,7 @@ Browser-only extractions (Morgan Stanley exhibit decode, EDGAR tables, AT&T
 annual reports) are documented in data/sources/README.md; their outputs are
 committed as CSVs and are not regenerated here.
 
-Run:  python scripts/fetch_sources.py [wikipedia|sp500|cmc|shiller|att|tbill|sec|all]
+Run:  python scripts/fetch_sources.py [wikipedia|sp500|cmc|cmc_missing|shiller|att|tbill|sec|all]
 """
 from __future__ import annotations
 
@@ -93,10 +93,16 @@ def fetch_sp500_constituents() -> pd.DataFrame:
     return t
 
 
-def fetch_cmc(pause: float = 1.0) -> pd.DataFrame:
-    """companiesmarketcap.com market-cap histories (embedded chart JSON; units = USD 1e5)."""
+def fetch_cmc(pause: float = 1.0, only_missing: bool = False) -> pd.DataFrame:
+    """companiesmarketcap.com market-cap histories (embedded chart JSON; units = USD 1e5).
+    ``only_missing``: fetch only universe tickers absent from the existing history file and
+    append them, leaving every previously scraped history untouched."""
     uni = load_universe()
-    frames = []
+    path = SOURCES_DIR / "companiesmarketcap_history.csv"
+    existing = pd.read_csv(path, parse_dates=["date"]) if only_missing and path.exists() else None
+    if existing is not None:
+        uni = uni[~uni.ticker.isin(set(existing.ticker))]
+    frames = [] if existing is None else [existing]
     for r in uni.dropna(subset=["cmc_slug"]).itertuples():
         resp = requests.get(f"https://companiesmarketcap.com/{r.cmc_slug}/marketcap/",
                             headers={"User-Agent": UA_BROWSER}, timeout=60)
@@ -111,7 +117,7 @@ def fetch_cmc(pause: float = 1.0) -> pd.DataFrame:
         frames.append(d[["date", "ticker", "mcap_usd"]])
         time.sleep(pause)
     out = pd.concat(frames).drop_duplicates(["ticker", "date"], keep="last").sort_values(["ticker", "date"])
-    out.to_csv(SOURCES_DIR / "companiesmarketcap_history.csv", index=False)
+    out.to_csv(path, index=False)
     return out
 
 
@@ -247,7 +253,7 @@ if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "all"
     jobs = {"wikipedia": fetch_wikipedia_ft, "sp500": fetch_sp500_constituents, "cmc": fetch_cmc,
             "shiller": fetch_shiller, "att": fetch_att_prices, "tbill": fetch_tbill,
-            "sec": fetch_sec}
+            "sec": fetch_sec, "cmc_missing": lambda: fetch_cmc(only_missing=True)}
     for name, fn in jobs.items():
         if what in (name, "all"):
             print(f"fetching {name} ...")

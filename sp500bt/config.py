@@ -15,6 +15,7 @@ DATA_QUALITY_DIR = RESULTS_DIR / "data_quality"  # price fetch report, price san
 
 TOP_HOLDINGS_CSV = DATA_DIR / "largest_company_by_quarter.csv"
 CORP_ACTIONS_CSV = DATA_DIR / "corporate_actions.csv"
+TOP20_CSV = DATA_DIR / "top20_by_quarter.csv"          # built by scripts/build_top_table.py
 
 START_DATE = "1975-01-01"
 AS_OF_DATE = "2026-01-02"      # valuation date for every scenario

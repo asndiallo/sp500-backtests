@@ -33,6 +33,10 @@ The starter 2011–2026 table had several errors that the sourced table corrects
 
   No conclusion changed. The placebo numbers in its report are the corrected ones.
 
+- **Top-20 lists** (`data/top20_by_quarter.csv`, Phase 7). COMPLETE from the 2009-03-31 observation only: Wachovia (absorbed 2008-12-31) and Genentech (bought out 2009-03-26) sat near rank 20 before then, and neither has price or market-cap history here.
+  - 27 surviving S&P 500 names that could plausibly reach rank 20 were added to `data/universe.csv` (companiesmarketcap history fetched for them only, via `fetch_sources.py cmc_missing`).
+  - Only PayPal (2020–21) actually entered a top-20 list.
+  - Ranks 1–10 of every top-20 list equal the corrected top-10 list; the build asserts this.
 - **IBM's 1974–75 share counts are extrapolated.** The 1975-01-01 row (AT&T by Morgan Stanley; IBM by my estimate, 0.8% apart) is LOW for that reason.
 - **Third-party source errors I found and corrected or excluded:**
   - Wikipedia's 2024 Q2/Q3 Apple/Microsoft labels are transposed.

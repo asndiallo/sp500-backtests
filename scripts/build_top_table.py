@@ -15,6 +15,7 @@ from sp500bt.config import (  # noqa: E402
     DATA_DIR,
     MANUAL_PRICES_DIR,  # noqa: E402
     SOURCES_DIR,
+    TOP20_CSV,
     TOP_HOLDINGS_CSV,
 )
 from sp500bt.mcap import manual_nominal  # noqa: E402
@@ -24,6 +25,10 @@ from sp500bt.universe import load_universe  # noqa: E402
 TRANSITIONS_CSV = DATA_DIR / "top1_transitions.csv"
 CONTEXT_CSV = SOURCES_DIR / "transition_context.csv"
 TOP10_COMPLETE_FROM = pd.Timestamp("2006-03-31")  # before this, delisted mega-caps are missing
+# Top-20: Wachovia (absorbed 2008-12-31) and Genentech (bought out 2009-03-26) have no price or
+# market-cap history here and sat near rank 20 until then; from the 2009-03-31 observation every
+# plausible top-20 member is a survivor in data/universe.csv.
+TOP20_COMPLETE_FROM = pd.Timestamp("2009-03-31")
 
 
 def build_ranking(qe: pd.DatetimeIndex, uni: pd.DataFrame) -> pd.DataFrame:
@@ -116,9 +121,32 @@ def main() -> None:
             "transition_reason", "structural_flag", "notes"]
     table[cols].to_csv(TOP_HOLDINGS_CSV, index=False)
     tr.to_csv(TRANSITIONS_CSV, index=False)
+    write_top20(table, ranking, uni)
     print(table.confidence.value_counts().to_dict())
     print(table.groupby(pd.to_datetime(table.date).dt.year // 10 * 10).confidence.value_counts().unstack(fill_value=0))
     print(f"wrote {TOP_HOLDINGS_CSV} ({len(table)} rows) and {TRANSITIONS_CSV} ({len(tr)} transitions)")
+
+
+def write_top20(table: pd.DataFrame, ranking: pd.DataFrame, uni: pd.DataFrame) -> None:
+    """data/top20_by_quarter.csv, keyed like the Phase 1 table. Lists are published only from
+    TOP20_COMPLETE_FROM; ranks 1-10 must equal the Phase 1 COMPLETE top-10 list."""
+    t20 = phase1.topn_lists(ranking, uni, 20, detail=True)
+    out = table[["date", "observation_date", "top10_tickers", "top10_status"]].merge(t20, on="observation_date",
+                                                                                    how="left")
+    obs = pd.to_datetime(out.observation_date)
+    out["top20_status"] = ["COMPLETE" if d >= TOP20_COMPLETE_FROM else "UNRESOLVED" for d in obs]
+    out["top20_tickers"] = [t if s == "COMPLETE" else "UNRESOLVED" for t, s in zip(out.top20, out.top20_status,
+                                                                                 strict=True)]
+    done = out.top20_status == "COMPLETE"
+    first10 = out.top20.str.split(",").str[:10].str.join(",")
+    bad = out[done & (out.top10_status == "COMPLETE") & (first10 != out.top10_tickers)]
+    if len(bad):
+        raise AssertionError(f"top-20 ranks 1-10 disagree with the Phase 1 top-10 on {list(bad.date)}")
+    cols = ["date", "observation_date", "top20_tickers", "top20_status", "rank20_mcap_bn", "rank21_ticker",
+            "rank21_mcap_bn", "members_ranked"]
+    out.loc[~done, ["rank20_mcap_bn", "rank21_ticker", "rank21_mcap_bn"]] = None
+    out[cols].to_csv(TOP20_CSV, index=False)
+    print(f"wrote {TOP20_CSV} ({int(done.sum())} COMPLETE quarters)")
 
 
 if __name__ == "__main__":

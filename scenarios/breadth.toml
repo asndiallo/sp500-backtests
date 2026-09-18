@@ -1,0 +1,55 @@
+id = "breadth"
+title = "Breadth ladder: #1, top-3, top-10 and top-20 equal-weight on complete-data windows"
+description = """
+Each quarter the $500 stock-leg contribution is split equally across the n largest S&P 500
+members (topn_ew picker); index leg and valuation as everywhere else.
+* top-3: COMPLETE top-10 lists, 2006-04-01 -> 2026-01-02 (same window as top10_ew).
+* top-20: data/top20_by_quarter.csv, COMPLETE from 2009-04-01 (Wachovia and Genentech, both
+  near rank 20 until their 2008-09 takeovers, have no data), 2009-04-01 -> 2026-01-02.
+* Ladder on the common window 2009-04-01: #1, top-3, top-10, top-20, baseline hold.
+Only complete-data windows are used; nothing is run on PARTIAL/UNRESOLVED lists.
+"""
+
+[defaults]
+group = "breadth"
+outputs = { events = false }
+
+[[runs]]
+id = "top3_ew_{rule}"
+picker = { name = "topn_ew", n = 3 }
+start = "2006-04-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "top20_ew_{rule}"
+picker = { name = "topn_ew", n = 20 }
+start = "2009-04-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+# common-window ladder (baseline hold)
+[[runs]]
+id = "ladder_top1_from_2009"
+picker = "top1"
+start = "2009-04-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "ladder_top3_from_2009"
+picker = { name = "topn_ew", n = 3 }
+start = "2009-04-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "ladder_top10_from_2009"
+picker = { name = "topn_ew", n = 10 }
+start = "2009-04-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "ladder_top20_from_2009"
+picker = { name = "topn_ew", n = 20 }
+start = "2009-04-01"
+rule = "baseline_hold"
+
+[[analyses]]
+name = "pick_switches"
