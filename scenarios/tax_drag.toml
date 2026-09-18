@@ -1,0 +1,52 @@
+id = "tax_drag"
+title = "Capital-gains tax drag on the three rules"
+description = """
+Illustrative flat capital-gains rates, NOT personalised tax advice. Realized gains on
+trailing-stop sales and corporate-action cash are taxed at sale (long-term if held
+> lt_days, else short-term); losses are carried forward. Stock-for-stock reorganisations
+are tax-free (basis split by value). Dividends are not taxed in any leg (all series are
+pre-tax total return). Each leg is its own taxable account. Results are shown both
+before and after a hypothetical full liquidation at the 2026-01-02 close.
+"""
+
+[defaults]
+picker = "top1"
+outputs = { events = true }
+# base case: 15% long-term / 32% short-term (illustrative)
+tax = { lt_rate = 0.15, st_rate = 0.32, lt_days = 365 }
+
+[[runs]]
+id = "taxed_{rule}_1975"
+group = "tax_base"
+start = "1975-01-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "taxed_{rule}_1995"
+group = "tax_base"
+start = "1995-01-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+# sensitivity: top US federal rates incl. the 3.8% net investment income tax (illustrative)
+[[runs]]
+id = "taxed_high_{rule}_1975"
+group = "tax_high"
+start = "1975-01-01"
+tax = { lt_rate = 0.238, st_rate = 0.408, lt_days = 365 }
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[analyses]]
+name = "tax_comparison"
+[analyses.params]
+pretax_family = "top1_core"
+pairs = [
+    ["taxed_baseline_hold_1975", "top1_baseline_hold"],
+    ["taxed_trailing_stop_25_1975", "top1_trailing_stop_25"],
+    ["taxed_buy_the_dip_25_50_1975", "top1_buy_the_dip_25_50"],
+    ["taxed_baseline_hold_1995", "top1_baseline_hold_from_1995"],
+    ["taxed_trailing_stop_25_1995", "top1_trailing_stop_25_from_1995"],
+    ["taxed_buy_the_dip_25_50_1995", "top1_buy_the_dip_25_50_from_1995"],
+    ["taxed_high_baseline_hold_1975", "top1_baseline_hold"],
+    ["taxed_high_trailing_stop_25_1975", "top1_trailing_stop_25"],
+    ["taxed_high_buy_the_dip_25_50_1975", "top1_buy_the_dip_25_50"],
+]

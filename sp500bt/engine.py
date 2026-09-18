@@ -27,6 +27,7 @@ from .corporate_actions import active_events
 from .mcap import nominal_price
 from .metrics import xirr
 from .prices import PriceDataError, adjusted_close
+from .tax import TaxModel
 
 
 class PriceBook:
@@ -67,10 +68,14 @@ class Lot:
     closed: bool = False
     dip_flags: set = field(default_factory=set)
     history: list = field(default_factory=list)  # ticker lineage through corporate actions
+    cost_basis: float | None = None     # tax basis ($); defaults to base_amount
+    acquired: pd.Timestamp | None = None  # holding-period start; carries through tax-free reorganisations
 
     def __post_init__(self):
         self.peak_price = self.peak_price or self.purchase_price
         self.history = self.history or [self.ticker]
+        self.cost_basis = self.base_amount if self.cost_basis is None else self.cost_basis
+        self.acquired = self.purchase_date if self.acquired is None else self.acquired
 
     def value(self, price: float) -> float:
         return self.shares * price
@@ -116,13 +121,16 @@ class SimResult:
     end: pd.Timestamp
     final: dict
     positions: pd.DataFrame      # every share change: date, symbol, shares, leg ("strategy" | "index_leg")
+    tax: dict | None = None      # set when a tax model is configured (see sp500bt.tax)
 
-    def xirr(self, leg: str | None = None) -> float:
+    def xirr(self, leg: str | None = None, terminal: float | None = None) -> float:
         """leg=None: whole portfolio; "stock": the #1-stock strategy leg (incl. index
-        units bought with its own stop/deal proceeds); "index": the index leg."""
+        units bought with its own stop/deal proceeds); "index": the index leg.
+        ``terminal`` overrides the ending value (e.g. after a liquidation tax)."""
         led = self.ledger if leg is None else self.ledger[self.ledger.leg.str.startswith(leg)]
-        terminal = self.final["total"] if leg is None else self.final[{"stock": "strategy_value",
-                                                                      "index": "index_leg_value"}[leg]]
+        if terminal is None:
+            terminal = self.final["total"] if leg is None else self.final[{"stock": "strategy_value",
+                                                                          "index": "index_leg_value"}[leg]]
         flows = pd.concat([-led.set_index("date")["amount"], pd.Series({self.end: terminal})])
         return xirr(flows)
 
@@ -134,7 +142,7 @@ def contribution_dates(start=START_DATE, end=AS_OF_DATE, freq=CONTRIB_FREQ):
 def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame, *,
              start=START_DATE, end=AS_OF_DATE, contrib=CONTRIB_AMOUNT, freq=CONTRIB_FREQ,
              index_ticker=INDEX_TICKER, add_amount=None, prices: PriceBook | None = None,
-             label="scenario") -> SimResult:
+             label="scenario", tax: dict | None = None) -> SimResult:
     """Run one scenario.
 
     picker(date, holdings) -> (row, [(ticker, weight), ...]); ``row`` is the Phase 1
@@ -143,6 +151,8 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
     add_amount: dollars per dip top-up; None (default) = the triggering lot's original
     purchase amount ($500 for top-1, $50 for a top-10 slice), so a top-up never
     exceeds the position it tops up.
+    tax: optional ``{lt_rate, st_rate, lt_days}`` -- realized gains on sales / corporate-action
+    cash are taxed and only the after-tax proceeds move to the index (sp500bt.tax).
     """
     px = prices or PriceBook()
     events_by_ticker = active_events(corp_actions)
@@ -150,11 +160,24 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
     lots: list[Lot] = []
     index_units: dict[str, float] = {}
     ledger, vals, fired, positions = [], [], [], []
+    taxm = TaxModel.from_config(tax)
+    index_tax_lots: list[tuple[str, float, float, pd.Timestamp]] = []   # (leg, units, basis, acquired)
 
     def to_index(amount, date, origin):
         units = amount / px.tr(index_ticker, date)
         index_units[origin] = index_units.get(origin, 0.0) + units
-        positions.append((date, index_ticker, units, "index_leg" if origin == "contribution" else "strategy"))
+        leg = "index_leg" if origin == "contribution" else "strategy"
+        positions.append((date, index_ticker, units, leg))
+        index_tax_lots.append((leg, units, amount, pd.Timestamp(date)))
+
+    def realize(lot, date, proceeds, basis):
+        """After-tax proceeds of a realization (proceeds unchanged when no tax model)."""
+        if taxm is None:
+            return proceeds
+        t = taxm.on_sale("strategy", date, proceeds, basis, lot.acquired)
+        if t:
+            fired.append((date, lot.ticker, "capital_gains_tax", t, lot.origin_date))
+        return proceeds - t
 
     def apply_corp_actions(date):
         new_lots = []
@@ -170,16 +193,31 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
                 p_old_nom = px.nominal(lot.ticker, ev_date)
                 lot.closed = True
                 positions.append((ev_date, lot.ticker, -lot.shares, "strategy"))
+                # value received per component, to split the tax basis pro rata
+                received = {}
                 for r in g.itertuples():
                     if r.mode == "cash":
-                        proceeds = value * r.cash_per_share / p_old_nom
-                        to_index(proceeds, ev_date, f"corp_action:{lot.origin_confidence}")
+                        received[r.Index] = value * r.cash_per_share / p_old_nom
+                    elif r.mode == "stock":
+                        received[r.Index] = value * r.ratio * px.nominal(r.new_ticker, ev_date) / p_old_nom
+                    elif r.mode in ("value_split", "writeoff"):
+                        received[r.Index] = value * r.ratio
+                    else:
+                        received[r.Index] = 0.0
+                total_received = sum(received.values()) or 1.0
+                for r in g.itertuples():
+                    basis_part = lot.cost_basis * received[r.Index] / total_received
+                    if r.mode == "cash":
+                        proceeds = received[r.Index]
+                        net = realize(lot, ev_date, proceeds, basis_part)
+                        to_index(net, ev_date, f"corp_action:{lot.origin_confidence}")
                         fired.append((ev_date, lot.ticker, "cash", proceeds, lot.origin_date))
                         continue
                     if r.mode == "bankruptcy":
                         fired.append((ev_date, lot.ticker, "bankruptcy", -value, lot.origin_date))
                         continue
                     if r.mode == "writeoff":  # sensitivity only: fraction ``ratio`` of value lost
+                        realize(lot, ev_date, 0.0, basis_part)
                         fired.append((ev_date, lot.ticker, "writeoff", -value * r.ratio, lot.origin_date))
                         continue
                     if r.mode == "stock":
@@ -191,7 +229,8 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
                     child = Lot(r.new_ticker, new_value / p_new, lot.purchase_date, lot.purchase_price,
                                 lot.origin_confidence, lot.origin_date, lot.kind, lot.base_amount * mult,
                                 peak_price=p_new * lot.peak_price / px.tr(lot.ticker, ev_date),
-                                dip_flags=set(lot.dip_flags), history=lot.history + [r.new_ticker])
+                                dip_flags=set(lot.dip_flags), history=lot.history + [r.new_ticker],
+                                cost_basis=basis_part, acquired=lot.acquired)
                     child.purchase_date = ev_date  # later events of the child start after this one
                     new_lots.append(child)
                     positions.append((ev_date, r.new_ticker, child.shares, "strategy"))
@@ -210,7 +249,7 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
             p = px.tr(lot.ticker, dt)
             action = rule_fn(lot, p)
             if action == "sell_to_index":
-                to_index(lot.value(p), dt, f"stop_proceeds:{lot.origin_confidence}")
+                to_index(realize(lot, dt, lot.value(p), lot.cost_basis), dt, f"stop_proceeds:{lot.origin_confidence}")
                 lot.closed = True
                 positions.append((dt, lot.ticker, -lot.shares, "strategy"))
                 fired.append((dt, lot.ticker, "trailing_stop_sell", lot.value(p), lot.origin_date))
@@ -235,10 +274,29 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
     apply_corp_actions(end)
     final = _mark(end, lots, index_units, px, index_ticker)
     vals.append(final)
+    tax_summary = None
+    if taxm is not None:
+        p_ix = px.tr(index_ticker, end)
+        strat = [(lot.value(px.tr(lot.ticker, end)), lot.cost_basis or 0.0, lot.acquired)
+                 for lot in lots if not lot.closed]
+        strat += [(u * p_ix, b, a) for leg, u, b, a in index_tax_lots if leg == "strategy"]
+        idx = [(u * p_ix, b, a) for leg, u, b, a in index_tax_lots if leg == "index_leg"]
+        t_s, t_i = taxm.liquidation_tax("strategy", end, strat), taxm.liquidation_tax("index_leg", end, idx)
+        tax_summary = {
+            "lt_rate": taxm.lt_rate, "st_rate": taxm.st_rate,
+            "interim_tax_paid": taxm.paid.get("strategy", 0.0),
+            "realizations": sum(1 for r in taxm.realized if r[1] == "strategy"),
+            "realized_gains": sum(r[4] for r in taxm.realized if r[1] == "strategy" and r[4] > 0),
+            "realized_losses": -sum(r[4] for r in taxm.realized if r[1] == "strategy" and r[4] < 0),
+            "loss_carryforward_left": taxm.carryforward.get("strategy", 0.0),
+            "strategy_liquidation_tax": t_s, "index_liquidation_tax": t_i,
+            "strategy_value_after_liquidation": final["strategy_value"] - t_s,
+            "index_leg_value_after_liquidation": final["index_leg_value"] - t_i,
+        }
     return SimResult(lots, index_units, pd.DataFrame(ledger, columns=["date", "leg", "amount"]),
                      pd.DataFrame(vals).set_index("date"),
                      pd.DataFrame(fired, columns=["date", "ticker", "action", "amount", "origin_date"]), end, final,
-                     pd.DataFrame(positions, columns=["date", "symbol", "shares", "leg"]))
+                     pd.DataFrame(positions, columns=["date", "symbol", "shares", "leg"]), tax_summary)
 
 
 def _mark(date, lots, index_units, px, index_ticker) -> dict:

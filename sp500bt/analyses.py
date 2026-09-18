@@ -165,3 +165,39 @@ def random_pick_placebo(ctx, n_sims: int, base_seed: int, start: str, rule: str 
     charts.placebo_histogram(sims, stats, refs, ctx.family.charts_dir / "xirr_distribution.png")
     print(f"  placebo: mean {stats['mean']:.2%} median {stats['median']:.2%} p5 {stats['p05']:.2%} "
           f"p95 {stats['p95']:.2%}; " + "; ".join(f"{r['label']} at P{r['percentile_rank']:.0f}" for r in refs))
+
+
+@analysis("tax_comparison")
+def tax_comparison(ctx, pretax_family: str, pairs: list[list[str]], file: str = "tax_comparison.csv"):
+    """Side-by-side pre-tax vs after-tax XIRRs. ``pairs`` = [[taxed_run_id, pretax_run_id], ...]
+    where the pre-tax run lives in ``pretax_family``'s runs.csv (not re-simulated)."""
+    pre = pd.read_csv(ctx.family.results_dir.parent / pretax_family / "runs.csv",
+                      float_precision="round_trip").set_index("scenario")
+    rows = []
+    for taxed_id, pre_id in pairs:
+        res, run, t = ctx.sims[taxed_id], ctx.runs[taxed_id], ctx.sims[taxed_id].tax
+        p = pre.loc[pre_id]
+        rows.append({
+            "run": taxed_id, "rule": spec_label(run["rule"]), "start": run["start"],
+            "lt_rate": t["lt_rate"], "st_rate": t["st_rate"],
+            "pretax_strategy_xirr": p.strategy_xirr, "pretax_index_xirr": p.index_xirr,
+            "strategy_xirr_interim_tax_only": res.xirr("stock"),
+            "strategy_xirr_after_liquidation": res.xirr("stock", t["strategy_value_after_liquidation"]),
+            "index_xirr_after_liquidation": res.xirr("index", t["index_leg_value_after_liquidation"]),
+            "strategy_value_pretax": p.strategy_value, "strategy_value_interim_tax_only": res.final["strategy_value"],
+            "strategy_value_after_liquidation": t["strategy_value_after_liquidation"],
+            "index_value_after_liquidation": t["index_leg_value_after_liquidation"],
+            "interim_tax_paid": t["interim_tax_paid"], "realizations": t["realizations"],
+            "realized_gains": t["realized_gains"], "realized_losses": t["realized_losses"],
+            "loss_carryforward_left": t["loss_carryforward_left"],
+            "strategy_liquidation_tax": t["strategy_liquidation_tax"],
+            "index_liquidation_tax": t["index_liquidation_tax"],
+        })
+    df = pd.DataFrame(rows)
+    df.to_csv(ctx.family.results_dir / file, index=False)
+    def order(g, col):
+        return " > ".join(g.sort_values(col, ascending=False).rule)
+
+    for (start, lt), g in df.groupby(["start", "lt_rate"]):
+        print(f"  {start} lt={lt:.1%}: pre-tax {order(g, 'pretax_strategy_xirr')} | "
+              f"after liquidation {order(g, 'strategy_xirr_after_liquidation')}")
