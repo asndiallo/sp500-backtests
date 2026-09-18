@@ -98,6 +98,28 @@ def test_fundamentals_are_point_in_time():
                 assert (pd.Timestamp(cutoff) - snap["period_end"]).days <= 400
 
 
+def test_stop_and_rebuy_conserves_value():
+    """Rebuys only move strategy money between the index and the stock: no parked index units
+    go negative, each stop is rebought at most once, and with no rebuys the run equals the
+    plain trailing stop."""
+    from sp500bt.registry import RULES as REG_RULES
+    from sp500bt.registry import build
+
+    h, ca = load_top_holdings(), load_corporate_actions()
+    stop = build(REG_RULES, {"name": "trailing_stop", "stop": 0.25}, "rule")
+    res = simulate(top1_picker, stop, h, ca, start="1995-01-01", prices=PX, rebuy={"require_loss_of_top": True})
+    assert min(res.index_units.values()) > -1e-9
+    ev = res.events
+    assert (ev.action == "rebuy").sum() <= (ev.action == "trailing_stop_sell").sum()
+    assert res.ledger.amount.sum() == simulate(top1_picker, stop, h, ca, start="1995-01-01",
+                                               prices=PX).ledger.amount.sum()  # no new money
+    never = simulate(top1_picker, stop, h, ca, start="1995-01-01", end="1996-12-31", prices=PX,
+                     rebuy={"require_loss_of_top": True})
+    plain = simulate(top1_picker, stop, h, ca, start="1995-01-01", end="1996-12-31", prices=PX)
+    if not (never.events.action == "rebuy").any():
+        assert abs(never.final["total"] - plain.final["total"]) < 1e-6
+
+
 def test_point_in_time_lookup():
     h = load_top_holdings()
     assert row_on("1975-02-15", h).top1_ticker == row_on("1975-01-01", h).top1_ticker

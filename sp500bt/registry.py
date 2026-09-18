@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 from .config import INDEX_TICKER
-from .engine import rule_baseline_hold, rule_buy_the_dip, rule_trailing_stop_25
+from .engine import rule_baseline_hold, rule_buy_the_dip, rule_partial_trim, rule_trailing_stop_25
 from .holdings import make_confidence_gate, row_on, top1_alt_picker, top1_picker, top10_picker
 
 PICKERS: dict[str, Callable] = {}
@@ -170,7 +170,7 @@ def _stop(stop: float = 0.25):
     if stop == 0.25:
         return rule_trailing_stop_25
 
-    def rule(lot, price_today):
+    def rule(lot, price_today, date=None):
         return rule_trailing_stop_25(lot, price_today, stop=stop)
     return rule
 
@@ -179,8 +179,44 @@ def _stop(stop: float = 0.25):
 def _dip(thresholds: tuple[float, ...] | list[float] = (0.25, 0.50), adds_can_trigger: bool = False):
     th = tuple(thresholds)
 
-    def rule(lot, price_today):
+    def rule(lot, price_today, date=None):
         return rule_buy_the_dip(lot, price_today, thresholds=th, adds_can_trigger=adds_can_trigger)
+    return rule
+
+
+@register(RULES, "partial_trim")
+def _trim(drop: float = 0.25, fraction: float = 0.5, max_trims: int = 1):
+    def rule(lot, price_today, date=None):
+        return rule_partial_trim(lot, price_today, drop=drop, fraction=fraction, max_trims=max_trims)
+    return rule
+
+
+@register(RULES, "vol_scaled_stop")
+def _vol_stop(k: float = 1.0, lookback_months: int = 36, floor: float = 0.10, cap: float = 0.50):
+    """Trailing stop whose distance scales with the stock's own volatility:
+    ``stop_t = clip(k * sigma_t, floor, cap)``, where sigma_t is the annualised standard
+    deviation of the stock's monthly total returns over the ``lookback_months`` completed
+    months before the check date (sqrt(12) scaling; monthly because the pre-1996 manual series are
+    month-end prints). Sell when price <= peak * (1 - stop_t). Fewer than 12 months of
+    history -> the cap applies."""
+    from .metrics import annualized_volatility
+    from .prices import adjusted_close
+
+    cache: dict = {}
+
+    def stop_for(ticker, date):
+        key = (ticker, pd.Timestamp(date).to_period("M"))
+        if key not in cache:
+            px = adjusted_close(ticker)
+            # completed months only: prices before the check date's month
+            monthly = px[px.index < pd.Timestamp(date).to_period("M").start_time].resample("ME").last()
+            monthly = monthly.pct_change().dropna()
+            r = monthly.iloc[-lookback_months:]
+            cache[key] = cap if len(r) < 12 else min(max(k * annualized_volatility(r, 12), floor), cap)
+        return cache[key]
+
+    def rule(lot, price_today, date=None):
+        return rule_trailing_stop_25(lot, price_today, stop=stop_for(lot.ticker, date))
     return rule
 
 

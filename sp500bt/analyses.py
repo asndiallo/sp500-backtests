@@ -158,6 +158,19 @@ def fundamental_scores(ctx, start: str, growth_weight: float = 0.5, margin_weigh
     df[cols].to_csv(ctx.family.results_dir / file, index=False)
 
 
+@analysis("event_counts")
+def event_counts(ctx, runs: list[str] | None = None, file: str = "event_counts.csv"):
+    """Rule actions per run (stops, trims, rebuys, dip top-ups; corporate actions excluded)."""
+    rows = []
+    for rid in runs or list(ctx.runs):
+        ev = ctx.sims[rid].events
+        acts = ev.action[ev.action.isin(["trailing_stop_sell", "partial_trim", "rebuy"])
+                         | ev.action.str.startswith("add_")]
+        rows.append({"run": rid, **acts.value_counts().to_dict(),
+                     "rebuy_amount": ev.loc[ev.action == "rebuy", "amount"].sum()})
+    pd.DataFrame(rows).fillna(0).to_csv(ctx.family.results_dir / file, index=False)
+
+
 @analysis("random_pick_placebo")
 def random_pick_placebo(ctx, n_sims: int, base_seed: int, start: str, rule: str | dict = "baseline_hold",
                         reference: list[dict] | None = None):

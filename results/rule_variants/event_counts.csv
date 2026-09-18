@@ -1,0 +1,13 @@
+run,partial_trim,rebuy_amount,trailing_stop_sell,rebuy
+partial_trim_once,222.0,0.0,0.0,0.0
+partial_trim_once_from_1995,110.0,0.0,0.0,0.0
+partial_trim_repeat,1213.0,0.0,0.0,0.0
+partial_trim_repeat_from_1995,470.0,0.0,0.0,0.0
+stop_and_rebuy,0.0,343824.8089893714,385.0,214.0
+stop_and_rebuy_from_1995,0.0,209084.16663924104,194.0,135.0
+stop_and_rebuy_any_top,0.0,325115.2574761025,406.0,235.0
+stop_and_rebuy_any_top_from_1995,0.0,202825.97112304292,211.0,152.0
+vol_stop_k1,0.0,0.0,201.0,0.0
+vol_stop_k1_from_1995,0.0,0.0,101.0,0.0
+vol_stop_k1.5,0.0,0.0,181.0,0.0
+vol_stop_k1.5_from_1995,0.0,0.0,69.0,0.0

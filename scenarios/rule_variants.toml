@@ -1,0 +1,92 @@
+id = "rule_variants"
+title = "Rule variants on the #1: partial trim, stop-and-rebuy, volatility-scaled stop"
+description = """
+#1 picker, $500/quarter per leg, rules checked quarterly, valued 2026-01-02; 1975-2026 and
+fresh 1995-2026 runs. Compare with top1_core's baseline hold and fixed 25% trailing stop.
+
+* partial_trim: sell `fraction` (50%) of a lot the first time it is `drop` (25%) below its
+  peak; proceeds to the index; the rest is held. Main case ONE trim per lot (max_trims = 1);
+  sensitivity: repeated trims (max_trims = 99), the peak resetting to the trim price so each
+  further trim needs another 25% fall from the post-trim high.
+* stop_and_rebuy: the fixed 25% trailing stop, but the index units bought with a stopped
+  lot's proceeds are switched back into that stock at the first quarterly check on which it
+  is the table's #1 again, after having been displaced from #1 (require_loss_of_top = true).
+  Sensitivity: require_loss_of_top = false (rebuy at the next check on which it is #1, even
+  if it never lost the top spot).
+* vol_scaled_stop: trailing stop at distance clip(k * sigma, 10%, 50%), sigma = annualised
+  std of the stock's monthly total returns over the previous 36 completed months (x sqrt 12).
+  k = 1.0 main case (a typical mega-cap sigma of ~25% gives the fixed stop's 25%); k = 1.5
+  sensitivity.
+"""
+
+[defaults]
+picker = "top1"
+group = "rule_variants"
+outputs = { events = true }
+
+[[runs]]
+id = "partial_trim_once"
+start = "1975-01-01"
+rule = { name = "partial_trim", drop = 0.25, fraction = 0.5, max_trims = 1 }
+
+[[runs]]
+id = "partial_trim_once_from_1995"
+start = "1995-01-01"
+rule = { name = "partial_trim", drop = 0.25, fraction = 0.5, max_trims = 1 }
+
+[[runs]]
+id = "partial_trim_repeat"
+start = "1975-01-01"
+rule = { name = "partial_trim", drop = 0.25, fraction = 0.5, max_trims = 99 }
+
+[[runs]]
+id = "partial_trim_repeat_from_1995"
+start = "1995-01-01"
+rule = { name = "partial_trim", drop = 0.25, fraction = 0.5, max_trims = 99 }
+
+[[runs]]
+id = "stop_and_rebuy"
+start = "1975-01-01"
+rule = { name = "trailing_stop", stop = 0.25 }
+rebuy = { require_loss_of_top = true }
+
+[[runs]]
+id = "stop_and_rebuy_from_1995"
+start = "1995-01-01"
+rule = { name = "trailing_stop", stop = 0.25 }
+rebuy = { require_loss_of_top = true }
+
+[[runs]]
+id = "stop_and_rebuy_any_top"
+start = "1975-01-01"
+rule = { name = "trailing_stop", stop = 0.25 }
+rebuy = { require_loss_of_top = false }
+
+[[runs]]
+id = "stop_and_rebuy_any_top_from_1995"
+start = "1995-01-01"
+rule = { name = "trailing_stop", stop = 0.25 }
+rebuy = { require_loss_of_top = false }
+
+[[runs]]
+id = "vol_stop_k1"
+start = "1975-01-01"
+rule = { name = "vol_scaled_stop", k = 1.0, lookback_months = 36, floor = 0.10, cap = 0.50 }
+
+[[runs]]
+id = "vol_stop_k1_from_1995"
+start = "1995-01-01"
+rule = { name = "vol_scaled_stop", k = 1.0, lookback_months = 36, floor = 0.10, cap = 0.50 }
+
+[[runs]]
+id = "vol_stop_k1.5"
+start = "1975-01-01"
+rule = { name = "vol_scaled_stop", k = 1.5, lookback_months = 36, floor = 0.10, cap = 0.50 }
+
+[[runs]]
+id = "vol_stop_k1.5_from_1995"
+start = "1995-01-01"
+rule = { name = "vol_scaled_stop", k = 1.5, lookback_months = 36, floor = 0.10, cap = 0.50 }
+
+[[analyses]]
+name = "event_counts"

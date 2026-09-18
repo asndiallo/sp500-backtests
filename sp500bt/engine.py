@@ -24,6 +24,7 @@ import pandas as pd
 
 from .config import AS_OF_DATE, CONTRIB_AMOUNT, CONTRIB_FREQ, INDEX_TICKER, START_DATE
 from .corporate_actions import active_events
+from .holdings import row_on
 from .mcap import nominal_price
 from .metrics import xirr
 from .prices import PriceDataError, adjusted_close
@@ -70,6 +71,7 @@ class Lot:
     history: list = field(default_factory=list)  # ticker lineage through corporate actions
     cost_basis: float | None = None     # tax basis ($); defaults to base_amount
     acquired: pd.Timestamp | None = None  # holding-period start; carries through tax-free reorganisations
+    trims: int = 0                      # partial trims already applied (rule_partial_trim)
 
     def __post_init__(self):
         self.peak_price = self.peak_price or self.purchase_price
@@ -82,16 +84,30 @@ class Lot:
 
 
 # ---------------------------------------------------------------- rules
-def rule_baseline_hold(lot, price_today):
+# rule(lot, price_today, date) -> "hold" | "sell_to_index" | "trim:<fraction>" | "add_<pct>".
+# ``date`` is the check date (rules that need price history, e.g. a volatility-scaled stop).
+def rule_baseline_hold(lot, price_today, date=None):
     return "hold"
 
 
-def rule_trailing_stop_25(lot, price_today, stop=0.25):
+def rule_trailing_stop_25(lot, price_today, date=None, stop=0.25):
     lot.peak_price = max(lot.peak_price, price_today)
     return "sell_to_index" if price_today <= lot.peak_price * (1 - stop) else "hold"
 
 
-def rule_buy_the_dip(lot, price_today, thresholds=(0.25, 0.50), adds_can_trigger=False):
+def rule_partial_trim(lot, price_today, date=None, drop=0.25, fraction=0.5, max_trims=1):
+    """Sell ``fraction`` of the lot's remaining shares the first time it is ``drop`` below its
+    peak; the rest is held. With ``max_trims`` > 1 the peak resets to the trim price, so each
+    further trim needs another ``drop`` from the post-trim high."""
+    lot.peak_price = max(lot.peak_price, price_today)
+    if lot.trims < max_trims and price_today <= lot.peak_price * (1 - drop):
+        lot.trims += 1
+        lot.peak_price = price_today
+        return f"trim:{fraction}"
+    return "hold"
+
+
+def rule_buy_the_dip(lot, price_today, date=None, thresholds=(0.25, 0.50), adds_can_trigger=False):
     """Add ``add_amount`` of new money the first time a lot is 25% / 50% below its
     peak. By default top-up lots do not themselves trigger further top-ups (the
     original notebook let them, which compounds into a cascade of new money)."""
@@ -142,18 +158,27 @@ def contribution_dates(start=START_DATE, end=AS_OF_DATE, freq=CONTRIB_FREQ):
 def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame, *,
              start=START_DATE, end=AS_OF_DATE, contrib=CONTRIB_AMOUNT, freq=CONTRIB_FREQ,
              index_ticker=INDEX_TICKER, add_amount=None, prices: PriceBook | None = None,
-             label="scenario", tax: dict | None = None) -> SimResult:
+             label="scenario", tax: dict | None = None, check_freq: str | None = None,
+             rebuy: dict | None = None) -> SimResult:
     """Run one scenario.
 
     picker(date, holdings) -> (row, [(ticker, weight), ...]); ``row`` is the Phase 1
     table row used (for its confidence).
-    rule_fn(lot, price_today) -> "hold" | "sell_to_index" | "add_25" | "add_50".
+    rule_fn(lot, price_today, date) -> "hold" | "sell_to_index" | "trim:<fraction>" | "add_25" | "add_50".
     add_amount: dollars per dip top-up; None (default) = the triggering lot's original
     purchase amount ($500 for top-1, $50 for a top-10 slice), so a top-up never
     exceeds the position it tops up.
     tax: optional ``{lt_rate, st_rate, lt_days}`` -- realized gains on sales / corporate-action
     cash are taxed and only the after-tax proceeds move to the index (sp500bt.tax).
+    check_freq: how often rules are checked (pandas offset alias); None = on contribution
+    dates. Contributions happen on ``freq`` dates only.
+    rebuy: optional ``{require_loss_of_top: bool}`` -- index units bought with a stopped lot's
+    proceeds are switched back into that stock at the first check date on which it is the
+    table's #1 again; with require_loss_of_top (default) it must first have been displaced
+    from #1 at the stop date or a later check date.
     """
+    if rebuy is not None and tax is not None:
+        raise NotImplementedError("stop-and-rebuy is not modelled with taxes")
     px = prices or PriceBook()
     events_by_ticker = active_events(corp_actions)
     end = pd.Timestamp(end)
@@ -230,7 +255,7 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
                                 lot.origin_confidence, lot.origin_date, lot.kind, lot.base_amount * mult,
                                 peak_price=p_new * lot.peak_price / px.tr(lot.ticker, ev_date),
                                 dip_flags=set(lot.dip_flags), history=lot.history + [r.new_ticker],
-                                cost_basis=basis_part, acquired=lot.acquired)
+                                cost_basis=basis_part, acquired=lot.acquired, trims=lot.trims)
                     child.purchase_date = ev_date  # later events of the child start after this one
                     new_lots.append(child)
                     positions.append((ev_date, r.new_ticker, child.shares, "strategy"))
@@ -240,25 +265,61 @@ def simulate(picker, rule_fn, holdings: pd.DataFrame, corp_actions: pd.DataFrame
         if new_lots:  # children may themselves have later events (e.g. T_CORP -> T in 2005)
             apply_corp_actions(date)
 
-    for dt in contribution_dates(start, end, freq):
+    parked: list[dict] = []   # stop proceeds waiting to be switched back (rebuy)
+    contrib_on = contribution_dates(start, end, freq)
+    check_on = contrib_on if check_freq is None else contribution_dates(start, end, check_freq)
+    for dt in contrib_on.union(check_on):
         apply_corp_actions(dt)
+        top_now = row_on(dt, holdings)["top1_ticker"] if rebuy is not None else None
         # 1) rules on open lots
-        for lot in list(lots):
+        for lot in list(lots) if dt in check_on else []:
             if lot.closed or lot.ticker == index_ticker:  # index-proxy lots are not subject to rules
                 continue
             p = px.tr(lot.ticker, dt)
-            action = rule_fn(lot, p)
+            action = rule_fn(lot, p, dt)
             if action == "sell_to_index":
-                to_index(realize(lot, dt, lot.value(p), lot.cost_basis), dt, f"stop_proceeds:{lot.origin_confidence}")
+                origin = f"stop_proceeds:{lot.origin_confidence}"
+                units_before = index_units.get(origin, 0.0)
+                to_index(realize(lot, dt, lot.value(p), lot.cost_basis), dt, origin)
                 lot.closed = True
                 positions.append((dt, lot.ticker, -lot.shares, "strategy"))
                 fired.append((dt, lot.ticker, "trailing_stop_sell", lot.value(p), lot.origin_date))
+                if rebuy is not None:
+                    parked.append({"ticker": lot.ticker, "date": dt, "origin": origin,
+                                   "units": index_units[origin] - units_before, "lost": top_now != lot.ticker,
+                                   "conf": lot.origin_confidence, "origin_date": lot.origin_date})
+            elif action.startswith("trim:"):
+                f = float(action.split(":")[1])
+                sold, basis = lot.shares * f, (lot.cost_basis or 0.0) * f
+                to_index(realize(lot, dt, sold * p, basis), dt, f"trim_proceeds:{lot.origin_confidence}")
+                lot.shares -= sold
+                lot.cost_basis, lot.base_amount = (lot.cost_basis or 0.0) - basis, lot.base_amount * (1 - f)
+                positions.append((dt, lot.ticker, -sold, "strategy"))
+                fired.append((dt, lot.ticker, "partial_trim", sold * p, lot.origin_date))
             elif action.startswith("add_"):
                 amt = add_amount if add_amount is not None else lot.base_amount
                 lots.append(Lot(lot.ticker, amt / p, dt, p, lot.origin_confidence, lot.origin_date, "dip_add", amt))
                 positions.append((dt, lot.ticker, amt / p, "strategy"))
                 ledger.append((dt, "stock_dip_add", amt))
                 fired.append((dt, lot.ticker, action, amt, lot.origin_date))
+        # 1b) stop-and-rebuy: switch parked proceeds back once the stock is #1 again
+        for pk in parked if dt in check_on else []:
+            if pk.get("done") or dt <= pk["date"]:
+                continue
+            if top_now != pk["ticker"]:
+                pk["lost"] = True
+                continue
+            if pk["lost"] or not rebuy.get("require_loss_of_top", True):  # type: ignore[union-attr]
+                amount = pk["units"] * px.tr(index_ticker, dt)
+                index_units[pk["origin"]] -= pk["units"]
+                positions.append((dt, index_ticker, -pk["units"], "strategy"))
+                p = px.tr(pk["ticker"], dt)
+                lots.append(Lot(pk["ticker"], amount / p, dt, p, pk["conf"], pk["origin_date"], "rebuy", amount))
+                positions.append((dt, pk["ticker"], amount / p, "strategy"))
+                fired.append((dt, pk["ticker"], "rebuy", amount, pk["origin_date"]))
+                pk["done"] = True
+        if dt not in contrib_on:
+            continue
         # 2) new contributions
         row, picks = picker(dt, holdings)
         for ticker, w in picks:
