@@ -26,54 +26,59 @@ Risk columns: monthly Sharpe and Sortino vs 3-month T-bills, and daily max drawd
 
 ## 1975–2026
 
-| Rule | Stock-leg final | XIRR | Sharpe | Sortino | Max DD | Stops / trims | Rebuys (amount) |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Baseline hold *(top1_core)* | $2,460,375 | 9.73% | 0.43 | 0.68 | −57% | — | — |
-| Fixed 25% trailing stop *(top1_core)* | $5,200,079 | 11.72% | 0.58 | 0.88 | −53% | 222 | — |
-| Partial trim: sell 50% at −25%, once per lot | $3,830,227 | 10.91% | 0.53 | 0.82 | −51% | 222 | — |
-| Partial trim, repeated | $4,310,895 | 11.22% | 0.55 | 0.83 | −52% | 1213 | — |
-| 25% stop + rebuy on regaining #1 | $3,184,550 | 10.42% | 0.49 | 0.74 | −53% | 385 | 214 ($343,825) |
-| 25% stop + rebuy whenever #1 (no loss of top required) | $2,937,174 | 10.20% | 0.48 | 0.72 | −53% | 406 | 235 ($325,115) |
-| Vol-scaled stop, k = 1.0 | $4,887,831 | 11.56% | 0.56 | 0.84 | −55% | 201 | — |
-| Vol-scaled stop, k = 1.5 | $3,554,688 | 10.71% | 0.50 | 0.75 | −55% | 181 | — |
-| *Index leg* | $5,508,523 | *11.87%* | *0.58* | *0.87* | *−55%* | | |
+| Rule                                                   | Stock-leg final |     XIRR | Sharpe | Sortino | Max DD | Stops / trims | Rebuys (amount) |
+| ------------------------------------------------------ | --------------: | -------: | -----: | ------: | -----: | ------------: | --------------: |
+| Baseline hold _(top1_core)_                            |      $2,460,375 |    9.73% |   0.43 |    0.68 |   −57% |             — |               — |
+| Fixed 25% trailing stop _(top1_core)_                  |      $5,200,079 |   11.72% |   0.58 |    0.88 |   −53% |           222 |               — |
+| Partial trim: sell 50% at −25%, once per lot           |      $3,830,227 |   10.91% |   0.53 |    0.82 |   −51% |           222 |               — |
+| Partial trim, repeated                                 |      $4,310,895 |   11.22% |   0.55 |    0.83 |   −52% |          1213 |               — |
+| 25% stop + rebuy on regaining #1                       |      $3,184,550 |   10.42% |   0.49 |    0.74 |   −53% |           385 |  214 ($343,825) |
+| 25% stop + rebuy whenever #1 (no loss of top required) |      $2,937,174 |   10.20% |   0.48 |    0.72 |   −53% |           406 |  235 ($325,115) |
+| Vol-scaled stop, k = 1.0                               |      $4,887,831 |   11.56% |   0.56 |    0.84 |   −55% |           201 |               — |
+| Vol-scaled stop, k = 1.5                               |      $3,554,688 |   10.71% |   0.50 |    0.75 |   −55% |           181 |               — |
+| _Index leg_                                            |      $5,508,523 | _11.87%_ | _0.58_ |  _0.87_ | _−55%_ |               |                 |
 
 ## 1995–2026 (fresh runs)
 
-| Rule | Stock-leg final | XIRR | Sharpe | Sortino | Max DD | Stops / trims | Rebuys (amount) |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Baseline hold *(top1_core)* | $442,341 | 10.66% | 0.52 | 0.82 | −76% | — | — |
-| Fixed 25% trailing stop *(top1_core)* | $488,826 | 11.14% | 0.67 | 1.08 | −53% | 110 | — |
-| Partial trim: sell 50% at −25%, once per lot | $465,584 | 10.91% | 0.61 | 0.97 | −64% | 110 | — |
-| Partial trim, repeated | $479,853 | 11.05% | 0.64 | 1.03 | −58% | 470 | — |
-| 25% stop + rebuy on regaining #1 | $419,819 | 10.40% | 0.60 | 0.96 | −61% | 194 | 135 ($209,084) |
-| 25% stop + rebuy whenever #1 (no loss of top required) | $375,870 | 9.86% | 0.54 | 0.86 | −69% | 211 | 152 ($202,826) |
-| Vol-scaled stop, k = 1.0 | $516,393 | 11.41% | 0.67 | 1.08 | −53% | 101 | — |
-| Vol-scaled stop, k = 1.5 | $544,189 | 11.66% | 0.64 | 1.03 | −61% | 69 | — |
-| *Index leg* | $444,487 | *10.68%* | *0.62* | *0.92* | *−55%* | | |
+| Rule                                                   | Stock-leg final |     XIRR | Sharpe | Sortino | Max DD | Stops / trims | Rebuys (amount) |
+| ------------------------------------------------------ | --------------: | -------: | -----: | ------: | -----: | ------------: | --------------: |
+| Baseline hold _(top1_core)_                            |        $442,341 |   10.66% |   0.52 |    0.82 |   −76% |             — |               — |
+| Fixed 25% trailing stop _(top1_core)_                  |        $488,826 |   11.14% |   0.67 |    1.08 |   −53% |           110 |               — |
+| Partial trim: sell 50% at −25%, once per lot           |        $465,584 |   10.91% |   0.61 |    0.97 |   −64% |           110 |               — |
+| Partial trim, repeated                                 |        $479,853 |   11.05% |   0.64 |    1.03 |   −58% |           470 |               — |
+| 25% stop + rebuy on regaining #1                       |        $419,819 |   10.40% |   0.60 |    0.96 |   −61% |           194 |  135 ($209,084) |
+| 25% stop + rebuy whenever #1 (no loss of top required) |        $375,870 |    9.86% |   0.54 |    0.86 |   −69% |           211 |  152 ($202,826) |
+| Vol-scaled stop, k = 1.0                               |        $516,393 |   11.41% |   0.67 |    1.08 |   −53% |           101 |               — |
+| Vol-scaled stop, k = 1.5                               |        $544,189 |   11.66% |   0.64 |    1.03 |   −61% |            69 |               — |
+| _Index leg_                                            |        $444,487 | _10.68%_ | _0.62_ |  _0.92_ | _−55%_ |               |                 |
+
 ## What this says
 
 **Partial trim is a halfway house, and lands halfway.**
+
 - **1975–2026.** Selling half at the same 222 triggers gives 10.91% XIRR, between baseline hold (9.73%) and the full stop (11.72%), with a Sharpe of 0.53 between 0.43 and 0.58.
 - **1995–2026.** Keeping half of each lot keeps half of the 2000–09 damage, so the worst drawdown is −64% vs −53% for the full stop.
 - **Repeated trims** move it further toward the full stop (11.22% / 11.05%), because repeated halvings end up selling most of a lot that keeps falling.
 - **Verdict.** The value of the trailing stop lies in getting fully out of a fading ex-leader. Holding half back dilutes it.
 
 **Stop-and-rebuy is worse than stopping for good.** It lowers XIRR by 1.3 pp over 1975–2026 (10.42% vs 11.72%) and by 0.74 pp over 1995–2026 (10.40% vs 11.14%), and gives up most of the stop's Sharpe advantage.
+
 - **The costly rebuys** went back into fading ex-leaders the moment they briefly retook #1. Each rebought lot, valued when it was next stopped out, vs the same money left in the index:
 
-  | Rebuy | Amount | Value at next exit | Left in the index |
-  |---|---:|---:|---:|
-  | IBM, 1990 | $49.9k | $27.2k (1993) | $70.0k |
-  | AT&T Corp, 1993 | $13.3k | $17.4k (2000) | $49.7k |
-  | GE, 2002 | $28.4k | $34.6k (2008) | $47.8k |
-  | Exxon, 2012 | $61.7k | $36.4k (2020) | $144.0k |
+  | Rebuy           | Amount | Value at next exit | Left in the index |
+  | --------------- | -----: | -----------------: | ----------------: |
+  | IBM, 1990       | $49.9k |      $27.2k (1993) |            $70.0k |
+  | AT&T Corp, 1993 | $13.3k |      $17.4k (2000) |            $49.7k |
+  | GE, 2002        | $28.4k |      $34.6k (2008) |            $47.8k |
+  | Exxon, 2012     | $61.7k |      $36.4k (2020) |           $144.0k |
 
   Only the 2013–2020 Apple and Microsoft rebuys beat the index.
+
 - **Regaining the top spot after a 25% fall is not a recovery signal.** Among these giants it more often meant the challenger had stumbled.
 - **Without the "must have lost #1" condition** it is worse still (10.20% / 9.86%): it rebuys a stock that is still #1 right after stopping out of it.
 
 **The volatility-scaled stop is about as good as the fixed stop, not better.**
+
 - **k = 1.0:** 11.56% vs 11.72% over 1975–2026, and 11.41% vs 11.14% over 1995–2026. Sharpe is essentially equal (0.56 vs 0.58; 0.67 vs 0.67).
 - **k = 1.5:** the wider stops lag badly over 1975–2026 (10.71%), because they let IBM and old-AT&T lots fall further before selling. They help over 1995–2026 (11.66%) by not stopping out of Apple and Microsoft in shallow dips, but at the cost of a −61% drawdown.
 - **Verdict.** Adapting the distance to volatility neither adds nor removes an edge. The fixed 25% is as defensible as any volatility-tuned width, and it has one fewer parameter.

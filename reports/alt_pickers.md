@@ -47,13 +47,13 @@ Sharpe/Sortino and max drawdown: monthly returns of the stock leg's time-weighte
 
 ## 2006–2026 (complete top-10 lists)
 
-| Picker | Rule | Window | Switches | Distinct names | Stock-leg final | XIRR | Sharpe | Sortino | Max DD | Index XIRR | Index Sharpe |
-|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| #1 (reference) | Baseline hold | 2006–2026 | 12 | 4 | $230,590 | 15.53% | 0.67 | 1.13 | −37% | 13.41% | 0.66 |
-| #2 | Baseline hold | 2006–2026 | 21 | 8 | $271,764 | 16.86% | 0.51 | 0.74 | −80% | 13.41% | 0.66 |
-| Ranks 2–5 equal-weight | Baseline hold | 2006–2026 | 40 | 19 | $272,672 | 16.89% | 0.64 | 0.95 | −68% | 13.41% | 0.66 |
-| Ranks 2–5 equal-weight | Trailing stop 25% | 2006–2026 | 40 | 19 | $207,938 | 14.68% | 0.64 | 0.94 | −61% | 13.41% | 0.66 |
-| Ranks 2–5 equal-weight | Buy the dip | 2006–2026 | 40 | 19 | $471,366 | 16.95% | 0.57 | 0.81 | −75% | 13.41% | 0.66 |
+| Picker                 | Rule              | Window    | Switches | Distinct names | Stock-leg final |   XIRR | Sharpe | Sortino | Max DD | Index XIRR | Index Sharpe |
+| ---------------------- | ----------------- | --------- | -------: | -------------: | --------------: | -----: | -----: | ------: | -----: | ---------: | -----------: |
+| #1 (reference)         | Baseline hold     | 2006–2026 |       12 |              4 |        $230,590 | 15.53% |   0.67 |    1.13 |   −37% |     13.41% |         0.66 |
+| #2                     | Baseline hold     | 2006–2026 |       21 |              8 |        $271,764 | 16.86% |   0.51 |    0.74 |   −80% |     13.41% |         0.66 |
+| Ranks 2–5 equal-weight | Baseline hold     | 2006–2026 |       40 |             19 |        $272,672 | 16.89% |   0.64 |    0.95 |   −68% |     13.41% |         0.66 |
+| Ranks 2–5 equal-weight | Trailing stop 25% | 2006–2026 |       40 |             19 |        $207,938 | 14.68% |   0.64 |    0.94 |   −61% |     13.41% |         0.66 |
+| Ranks 2–5 equal-weight | Buy the dip       | 2006–2026 |       40 |             19 |        $471,366 | 16.95% |   0.57 |    0.81 |   −75% |     13.41% |         0.66 |
 
 ## What this says
 

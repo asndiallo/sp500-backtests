@@ -18,17 +18,17 @@
 - 2012-04-01 is the first quarter where **all ten** members have data. The picker raises if any member is missing (`min_coverage = 10`), so the universe never silently shrinks.
 - The #1 and top-10 equal-weight are re-run over the same window as references. This window is dominated by mega-cap tech: the index leg earned 14.74%.
 
-| Picker | Rule | Window | Switches | Distinct names | Stock-leg final | XIRR | Sharpe | Sortino | Max DD | Index XIRR | Index Sharpe |
-|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| #1 (reference) | Baseline hold | 2012–2026 | 9 | 4 | $183,212 | 24.57% | 0.80 | 1.35 | −44% | 14.74% | 0.92 |
-| #1 (reference) | Trailing stop 25% | 2012–2026 | 9 | 4 | $90,607 | 15.74% | 0.65 | 1.01 | −41% | 14.74% | 0.92 |
-| #1 (reference) | Buy the dip | 2012–2026 | 9 | 4 | $316,661 | 26.28% | 0.81 | 1.38 | −44% | 14.74% | 0.92 |
-| Top-10 equal-weight | Baseline hold | 2012–2026 | 32 | 24 | $111,805 | 18.39% | 1.03 | 1.70 | −30% | 14.74% | 0.92 |
-| Growth + margin rank (50/50) | Baseline hold | 2012–2026 | 11 | 6 | $171,544 | 23.75% | 0.88 | 1.47 | −44% | 14.74% | 0.92 |
-| Growth + margin rank (50/50) | Trailing stop 25% | 2012–2026 | 11 | 6 | $105,605 | 17.68% | 0.79 | 1.26 | −41% | 14.74% | 0.92 |
-| Growth + margin rank (50/50) | Buy the dip | 2012–2026 | 11 | 6 | $317,838 | 25.85% | 0.88 | 1.48 | −44% | 14.74% | 0.92 |
-| Growth rank only | Baseline hold | 2012–2026 | 9 | 8 | $155,834 | 22.55% | 0.83 | 1.37 | −49% | 14.74% | 0.92 |
-| Margin rank only | Baseline hold | 2012–2026 | 10 | 8 | $106,072 | 17.73% | 0.81 | 1.30 | −33% | 14.74% | 0.92 |
+| Picker                       | Rule              | Window    | Switches | Distinct names | Stock-leg final |   XIRR | Sharpe | Sortino | Max DD | Index XIRR | Index Sharpe |
+| ---------------------------- | ----------------- | --------- | -------: | -------------: | --------------: | -----: | -----: | ------: | -----: | ---------: | -----------: |
+| #1 (reference)               | Baseline hold     | 2012–2026 |        9 |              4 |        $183,212 | 24.57% |   0.80 |    1.35 |   −44% |     14.74% |         0.92 |
+| #1 (reference)               | Trailing stop 25% | 2012–2026 |        9 |              4 |         $90,607 | 15.74% |   0.65 |    1.01 |   −41% |     14.74% |         0.92 |
+| #1 (reference)               | Buy the dip       | 2012–2026 |        9 |              4 |        $316,661 | 26.28% |   0.81 |    1.38 |   −44% |     14.74% |         0.92 |
+| Top-10 equal-weight          | Baseline hold     | 2012–2026 |       32 |             24 |        $111,805 | 18.39% |   1.03 |    1.70 |   −30% |     14.74% |         0.92 |
+| Growth + margin rank (50/50) | Baseline hold     | 2012–2026 |       11 |              6 |        $171,544 | 23.75% |   0.88 |    1.47 |   −44% |     14.74% |         0.92 |
+| Growth + margin rank (50/50) | Trailing stop 25% | 2012–2026 |       11 |              6 |        $105,605 | 17.68% |   0.79 |    1.26 |   −41% |     14.74% |         0.92 |
+| Growth + margin rank (50/50) | Buy the dip       | 2012–2026 |       11 |              6 |        $317,838 | 25.85% |   0.88 |    1.48 |   −44% |     14.74% |         0.92 |
+| Growth rank only             | Baseline hold     | 2012–2026 |        9 |              8 |        $155,834 | 22.55% |   0.83 |    1.37 |   −49% |     14.74% |         0.92 |
+| Margin rank only             | Baseline hold     | 2012–2026 |       10 |              8 |        $106,072 | 17.73% |   0.81 |    1.30 |   −33% |     14.74% |         0.92 |
 
 ## What this says
 
