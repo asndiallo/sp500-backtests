@@ -4,7 +4,7 @@ Browser-only extractions (Morgan Stanley exhibit decode, EDGAR tables, AT&T
 annual reports) are documented in data/sources/README.md; their outputs are
 committed as CSVs and are not regenerated here.
 
-Run:  python scripts/fetch_sources.py [wikipedia|sp500|cmc|shiller|att|tbill|all]
+Run:  python scripts/fetch_sources.py [wikipedia|sp500|cmc|shiller|att|tbill|sec|all]
 """
 from __future__ import annotations
 
@@ -139,6 +139,69 @@ def fetch_tbill() -> pd.DataFrame:
     return df
 
 
+# SEC XBRL fundamentals (fundamentals picker) ---
+# data.sec.gov answers a plain research User-Agent; no contact detail is sent.
+SEC_FACTS = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json"
+SEC_SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
+# every ticker in a COMPLETE top-10 list (2006-04-01 onward); GOOGL = Google Inc. until Alphabet's
+# 2015 reorganisation, then Alphabet Inc.
+SEC_CIKS: dict[str, list[int]] = {
+    "MSFT": [789019], "AAPL": [320193], "BRK-B": [1067983], "JNJ": [200406], "XOM": [34088],
+    "GOOGL": [1288776, 1652044], "WMT": [104169], "GE": [40545], "META": [1326801], "AMZN": [1018724],
+    "JPM": [19617], "PG": [80424], "T": [732717], "CVX": [93410], "V": [1403161], "IBM": [51143],
+    "TSLA": [1318605], "NVDA": [1045810], "WFC": [72971], "BAC": [70858], "AVGO": [1730168], "C": [831001],
+    "LLY": [59478], "UNH": [731766], "PFE": [78003], "AIG": [5272], "MO": [764180], "CSCO": [858877],
+    "KO": [21344], "MA": [1141391],
+}
+SEC_CONCEPTS = {
+    "revenue": ["RevenueFromContractWithCustomerExcludingAssessedTax", "Revenues", "SalesRevenueNet",
+                "SalesRevenueGoodsNet", "RevenueFromContractWithCustomerIncludingAssessedTax",
+                "RevenuesNetOfInterestExpense", "SalesRevenueServicesNet"],
+    # banks without a total-revenue tag: net revenue = net interest income + noninterest income
+    "bank_net_interest_income": ["InterestIncomeExpenseNet"],
+    "bank_noninterest_income": ["NoninterestIncome"],
+    "operating_income": ["OperatingIncomeLoss"],
+    "pretax_income": ["IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+                      "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments"],
+}
+
+
+def fetch_sec() -> pd.DataFrame:
+    """USD duration facts (start, end, value, form, filing date) for the SEC_CONCEPTS of every
+    SEC_CIKS company, from 10-K / 10-Q filings (amendments included; the picker uses the
+    filing date so later restatements never leak backwards). Standard us-gaap tags only:
+    company-specific extension tags are not in the API."""
+    headers = {"User-Agent": UA_WIKI}
+    rows, checks = [], []
+    for ticker, ciks in SEC_CIKS.items():
+        for cik in ciks:
+            meta = requests.get(SEC_SUBMISSIONS.format(cik=cik), headers=headers, timeout=60)
+            meta.raise_for_status()
+            checks.append((ticker, cik, meta.json().get("name"), ",".join(meta.json().get("tickers", []))))
+            time.sleep(0.2)
+            r = requests.get(SEC_FACTS.format(cik=cik), headers=headers, timeout=180)
+            r.raise_for_status()
+            gaap = r.json()["facts"].get("us-gaap", {})
+            time.sleep(0.2)
+            for kind, concepts in SEC_CONCEPTS.items():
+                for concept in concepts:
+                    for f in gaap.get(concept, {}).get("units", {}).get("USD", []):
+                        if "start" not in f or not f.get("form", "").startswith(("10-K", "10-Q")):
+                            continue
+                        rows.append({"ticker": ticker, "cik": cik, "kind": kind, "concept": concept,
+                                     "start": f["start"], "end": f["end"], "value": f["val"], "form": f["form"],
+                                     "fy": f.get("fy"), "fp": f.get("fp"), "filed": f["filed"], "accn": f["accn"]})
+        print(f"  {ticker}: {sum(r['ticker'] == ticker for r in rows)} facts")
+    df = pd.DataFrame(rows).drop_duplicates().sort_values(["ticker", "kind", "concept", "end", "filed"])
+    with open(SOURCES_DIR / "sec_xbrl_fundamentals.csv", "w") as f:
+        f.write("# SEC EDGAR XBRL companyfacts API (public domain), us-gaap USD duration facts from 10-K/10-Q "
+                "filings. Source: https://data.sec.gov/api/xbrl/companyfacts/CIK##########.json\n")
+        df.to_csv(f, index=False)
+    pd.DataFrame(checks, columns=["ticker", "cik", "sec_name", "sec_tickers"]).to_csv(
+        SOURCES_DIR / "sec_ciks.csv", index=False)
+    return df
+
+
 # historicalstockinfo.com AT&T tables ------------------------------------------------------
 HSI_PRICES = "https://historicalstockinfo.com/att-corp-stock-prices-table/"
 HSI_DIVS = "https://historicalstockinfo.com/att-corp-dividends-reference-sheet/"
@@ -183,7 +246,8 @@ def fetch_att_prices() -> pd.DataFrame:
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "all"
     jobs = {"wikipedia": fetch_wikipedia_ft, "sp500": fetch_sp500_constituents, "cmc": fetch_cmc,
-            "shiller": fetch_shiller, "att": fetch_att_prices, "tbill": fetch_tbill}
+            "shiller": fetch_shiller, "att": fetch_att_prices, "tbill": fetch_tbill,
+            "sec": fetch_sec}
     for name, fn in jobs.items():
         if what in (name, "all"):
             print(f"fetching {name} ...")

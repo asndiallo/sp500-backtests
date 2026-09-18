@@ -1,0 +1,100 @@
+id = "alt_pickers"
+title = "Alternative pickers: margin-buffer #1, the #2, and ranks 2–5 equal-weight"
+description = """
+Same DCA framework as top1_core ($500/quarter per leg, valued 2026-01-02), different pickers:
+* top1_margin_buffer: keep buying the incumbent #1 until a new #1 leads it by more than
+  `buffer` in market cap (5% main case; 10% and 20% as sensitivities). Fewer switches.
+* rank n = 2: "the highest market cap among ranks 2–5" is by definition the #2 (runner-up),
+  available for every quarter since 1975.
+* ranks_ew 2–5: equal weight across ranks 2–5, only where top-10 lists are COMPLETE (2006-04-01).
+The #1 picker is re-run as the reference for switch counts (identical to top1_core / top10_ew).
+"""
+
+[defaults]
+group = "alt_pickers"
+outputs = { events = false }
+
+# --- margin buffer (main case 5%) and the #2, both windows, all three rules
+[[runs]]
+id = "buffer5_{rule}"
+picker = { name = "top1_margin_buffer", buffer = 0.05 }
+start = "1975-01-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "buffer5_{rule}_from_1995"
+picker = { name = "top1_margin_buffer", buffer = 0.05 }
+start = "1995-01-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "rank2_{rule}"
+picker = { name = "rank", n = 2 }
+start = "1975-01-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "rank2_{rule}_from_1995"
+picker = { name = "rank", n = 2 }
+start = "1995-01-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+# --- buffer sensitivity (baseline hold only; switches do not depend on the rule)
+[[runs]]
+id = "buffer10_baseline_hold"
+picker = { name = "top1_margin_buffer", buffer = 0.10 }
+start = "1975-01-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "buffer20_baseline_hold"
+picker = { name = "top1_margin_buffer", buffer = 0.20 }
+start = "1975-01-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "buffer10_baseline_hold_from_1995"
+picker = { name = "top1_margin_buffer", buffer = 0.10 }
+start = "1995-01-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "buffer20_baseline_hold_from_1995"
+picker = { name = "top1_margin_buffer", buffer = 0.20 }
+start = "1995-01-01"
+rule = "baseline_hold"
+
+# --- ranks 2–5 equal weight, COMPLETE top-10 window only
+[[runs]]
+id = "ranks2to5_ew_{rule}"
+picker = { name = "ranks_ew", first = 2, last = 5 }
+start = "2006-04-01"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+# --- #1 references for switch counts (same values as top1_core / top10_ew)
+[[runs]]
+id = "top1_reference_baseline_hold"
+picker = "top1"
+start = "1975-01-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "top1_reference_baseline_hold_from_1995"
+picker = "top1"
+start = "1995-01-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "rank2_reference_baseline_hold_from_2006"
+picker = { name = "rank", n = 2 }
+start = "2006-04-01"
+rule = "baseline_hold"
+
+[[runs]]
+id = "top1_reference_baseline_hold_from_2006"
+picker = "top1"
+start = "2006-04-01"
+rule = "baseline_hold"
+
+[[analyses]]
+name = "pick_switches"

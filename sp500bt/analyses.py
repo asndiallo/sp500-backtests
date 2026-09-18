@@ -10,7 +10,7 @@ from collections.abc import Callable
 import pandas as pd
 
 from . import charts
-from .config import CONTRIB_AMOUNT
+from .config import CONTRIB_AMOUNT, CONTRIB_FREQ
 from .engine import attribution, contribution_dates
 from .metrics import drawdown, max_drawdown
 from .scenario import spec_label
@@ -112,6 +112,50 @@ def rule_events_chart(ctx, runs: list[str], window: str, file: str):
     values = {rule: ctx.daily(rid) for rule, rid in by_rule.items()}
     events = {rule: ctx.sims[rid].events for rule, rid in by_rule.items()}
     charts.event_timeline(values, events, window, ctx.family.charts_dir / file)
+
+
+@analysis("pick_switches")
+def pick_switches(ctx, runs: list[str] | None = None, file: str = "pick_switches.csv"):
+    """How often each run's picker changes where new money goes. Picks are replayed from a
+    fresh picker on the run's contribution dates (pickers do not depend on the rule), so a
+    'switch' is a quarter whose set of picked tickers differs from the previous quarter's."""
+    from .registry import PICKERS, build
+
+    rows = []
+    for rid in runs or list(ctx.runs):
+        run, res = ctx.runs[rid], ctx.sims[rid]
+        picker = build(PICKERS, run["picker"], "picker")
+        dates = contribution_dates(run["start"], run.get("end", res.end), run.get("freq", CONTRIB_FREQ))
+        picks = [frozenset(t for t, _ in picker(d, ctx.holdings)[1]) for d in dates]
+        switches = sum(a != b for a, b in zip(picks, picks[1:], strict=False))
+        spells = pd.Series([p != q for p, q in zip(picks, [None, *picks[:-1]], strict=True)]).cumsum()
+        rows.append({"run": rid, "picker": spec_label(run["picker"]), "rule": spec_label(run["rule"]),
+                     "start": run["start"], "contributions": len(picks), "switches": switches,
+                     "distinct_tickers": len(frozenset().union(*picks)),
+                     "mean_spell_periods": spells.value_counts().mean(),
+                     "strategy_xirr": ctx.summary.set_index("scenario").loc[rid, "strategy_xirr"]})
+    pd.DataFrame(rows).to_csv(ctx.family.results_dir / file, index=False)
+
+
+@analysis("fundamental_scores")
+def fundamental_scores(ctx, start: str, growth_weight: float = 0.5, margin_weight: float = 0.5,
+                       max_age_days: int = 400, file: str = "fundamental_scores.csv"):
+    """Every quarter's top-10 fundamentals, ranks and pick (audit trail for the picker)."""
+    from .fundamentals import rank_scores
+    from .holdings import row_on
+
+    out = []
+    for d in contribution_dates(start):
+        row = row_on(d, ctx.holdings)
+        sc = rank_scores(row["top10_tickers"].split(","), row["observation_date"], growth_weight, margin_weight,
+                         max_age_days)
+        out.append(sc.assign(date=d.date(), observation_date=row["observation_date"],
+                             top1=row["top1_ticker"], picked=sc.index == 0))
+    df = pd.concat(out, ignore_index=True)
+    cols = ["date", "observation_date", "ticker", "picked", "top1", "cap_rank", "revenue_growth", "growth_rank",
+            "margin", "margin_rank", "score", "margin_basis", "revenue_concept", "period_start", "period_end",
+            "form", "filed"]
+    df[cols].to_csv(ctx.family.results_dir / file, index=False)
 
 
 @analysis("random_pick_placebo")

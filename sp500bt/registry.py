@@ -82,10 +82,80 @@ def _random_top10(seed: int):
 
     def picker(date, holdings):
         row = row_on(date, holdings)
-        if row["top10_status"] != "COMPLETE":
-            raise ValueError(f"top-10 list for {row['date'].date()} is {row['top10_status']}")
-        tickers = row["top10_tickers"].split(",")
+        tickers = _complete_top10(row)
         return row, [(tickers[int(rng.integers(len(tickers)))], 1.0)]
+    return picker
+
+
+def _complete_top10(row) -> list[str]:
+    if row["top10_status"] != "COMPLETE":
+        raise ValueError(f"top-10 list for {row['date'].date()} is {row['top10_status']}")
+    return row["top10_tickers"].split(",")  # ordered by market cap (checked: [0] == #1, [1] == runner-up)
+
+
+@register(PICKERS, "top1_margin_buffer")
+def _margin_buffer(buffer: float = 0.05):
+    """Hysteresis on the #1: keep buying the incumbent until a new #1 leads it by more than
+    ``buffer`` in market cap at the observation date (new_cap / incumbent_cap - 1 > buffer).
+
+    The incumbent's cap comes from the committed table: when it is the runner-up, the
+    comparison is the row's ``margin_pct``. When it has dropped out of the top two its cap is
+    not in the table, and the buffer is treated as exceeded (a #3 trails the #1 by at least the
+    #1-#2 margin). That case occurs once, 2025-06-30: NVDA led AAPL by 26% (quarter-end caps in
+    data/sources/derived_quarter_end_market_caps.csv), well over any buffer tested.
+    Four LOW rows name a #1 whose estimated cap is slightly *below* the runner-up's (margin_pct
+    -0.1 to -1.0: the #1 was set by source anchors, within the estimate's error); an incumbent
+    runner-up is kept there at any buffer.
+    Only new contributions follow the incumbent; existing lots are never sold by the picker."""
+    state: dict[str, str | None] = {"incumbent": None}
+
+    def picker(date, holdings):
+        row = row_on(date, holdings)
+        inc, new = state["incumbent"], row["top1_ticker"]
+        if inc != new and (inc is None or inc != row["runner_up_ticker"] or row["margin_pct"] / 100 > buffer):
+            state["incumbent"] = new
+        return row, [(state["incumbent"], 1.0)]
+    return picker
+
+
+@register(PICKERS, "rank")
+def _rank(n: int = 2):
+    """The n-th largest company each quarter. n = 2 uses the table's runner-up (every row,
+    1975 onward); n >= 3 needs a COMPLETE top-10 list (2006-04-01 onward)."""
+    def picker(date, holdings):
+        row = row_on(date, holdings)
+        t = row["top1_ticker"] if n == 1 else row["runner_up_ticker"] if n == 2 else _complete_top10(row)[n - 1]
+        return row, [(t, 1.0)]
+    return picker
+
+
+@register(PICKERS, "ranks_ew")
+def _ranks_ew(first: int = 2, last: int = 5):
+    """Equal weight across ranks ``first``..``last`` (inclusive) of the COMPLETE top-10 list."""
+    def picker(date, holdings):
+        row = row_on(date, holdings)
+        names = _complete_top10(row)[first - 1:last]
+        return row, [(t, 1.0 / len(names)) for t in names]
+    return picker
+
+
+@register(PICKERS, "fundamental_rank")
+def _fundamental_rank(growth_weight: float = 0.5, margin_weight: float = 0.5, max_age_days: int = 400,
+                      min_coverage: int = 10):
+    """Each quarter, the top-10 member with the best weighted rank on fiscal-YTD revenue growth
+    and margin (sp500bt.fundamentals.rank_scores), using only SEC filings filed on or before the
+    row's observation date. Raises if fewer than ``min_coverage`` members have data, so a
+    run can never silently shrink its universe."""
+    from .fundamentals import rank_scores
+
+    def picker(date, holdings):
+        row = row_on(date, holdings)
+        scores = rank_scores(_complete_top10(row), row["observation_date"], growth_weight, margin_weight,
+                             max_age_days)
+        covered = int(scores.score.notna().sum())
+        if covered < min_coverage:
+            raise ValueError(f"{row['date'].date()}: fundamentals for only {covered} of {len(scores)} top-10 names")
+        return row, [(scores.ticker.iloc[0], 1.0)]
     return picker
 
 

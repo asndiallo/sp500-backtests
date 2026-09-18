@@ -42,6 +42,8 @@ Every scenario ever run is listed in [`scenarios/index.csv`](scenarios/index.csv
 | `random_pick_placebo`                         | 1,000 random top-10 picks per quarter vs the #1 (2006–2026): the #1 ranks at the 80th percentile                                         | [reports/random_pick_placebo.md](reports/random_pick_placebo.md) |
 | `tax_drag`                                    | Capital-gains tax on realizations (illustrative 15%/32% and 23.8%/40.8%), before and after liquidation: ranking unchanged                | [reports/tax_drag.md](reports/tax_drag.md)                       |
 | `rolling_windows`                             | #1 minus index XIRR for all 435 10/15/20-year windows: regime-driven, not converging to a tie                                            | [reports/rolling_windows.md](reports/rolling_windows.md)         |
+| `alt_pickers`                                 | Margin-buffer #1 (5%/10%/20%), the #2, ranks 2–5 equal-weight: the #2 beat the #1 in every window; a 5% buffer cuts switches 39 → 28 at no cost | [reports/alt_pickers.md](reports/alt_pickers.md)                 |
+| `fundamentals_picker`                         | Best revenue-growth + margin rank among the top 10 (SEC XBRL, point-in-time), 2012–2026: matches the #1 on return, modestly better Sharpe | [reports/fundamentals_picker.md](reports/fundamentals_picker.md) |
 | — (every family)                              | Sharpe, Sortino, downside deviation and max drawdown per leg next to XIRR (`results/<id>/risk.csv`, `results/risk_metrics.csv`)          | [reports/risk_metrics.md](reports/risk_metrics.md)               |
 | —                                             | Phase 1 table corrections, known gaps, data caveats                                                                                      | [reports/methodology.md](reports/methodology.md)                 |
 
@@ -49,7 +51,7 @@ Every scenario ever run is listed in [`scenarios/index.csv`](scenarios/index.csv
 
 ```sh
 source .venv/bin/activate
-python scripts/fetch_sources.py        # automatable sources (incl. `tbill`, the risk-free rate); `cmc` is required on a fresh clone (scraped data is not committed)
+python scripts/fetch_sources.py        # automatable sources (incl. `tbill`, the risk-free rate, and `sec`, XBRL fundamentals); `cmc` is required on a fresh clone (scraped data is not committed)
 python scripts/cache_prices.py         # Yahoo cache + failure report (results/data_quality/)
 python scripts/build_manual_prices.py  # T_OLD, T_CORP, SPX_TR
 python scripts/build_top_table.py      # Phase 1 table + transitions

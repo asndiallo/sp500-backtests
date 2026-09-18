@@ -71,6 +71,33 @@ def test_leg_navs_reconcile_to_engine():
     assert inside[~inside.index.isin(flow_days)].all()
 
 
+def test_margin_buffer_zero_is_plain_top1():
+    """With a 0% buffer the picker follows the #1, except on the 4 LOW rows whose #1 was set by
+    source anchors against a (within-error) negative market-cap margin; there it keeps the
+    incumbent until the next row."""
+    from sp500bt.registry import PICKERS, build
+
+    h = load_top_holdings()
+    plain, buffered = build(PICKERS, "top1", "picker"), build(PICKERS, {"name": "top1_margin_buffer", "buffer": 0.0},
+                                                             "picker")
+    differ = [d for d in contribution_dates("1975-01-01") if plain(d, h)[1] != buffered(d, h)[1]]
+    negative = set(h.loc[h.margin_pct <= 0, "date"])
+    assert differ and all(row_on(d, h)["date"] in negative for d in differ), differ
+
+
+def test_fundamentals_are_point_in_time():
+    """Snapshots only use filings filed on or before the cut-off, and a later cut-off never
+    changes an earlier quarter's snapshot."""
+    from sp500bt.fundamentals import snapshot
+
+    for cutoff in ["2013-03-31", "2018-06-30", "2024-09-30"]:
+        for t in ["AAPL", "XOM", "JPM", "WFC", "BRK-B"]:
+            snap = snapshot(t, pd.Timestamp(cutoff))
+            if snap is not None:
+                assert snap["filed"] <= pd.Timestamp(cutoff), (t, cutoff)
+                assert (pd.Timestamp(cutoff) - snap["period_end"]).days <= 400
+
+
 def test_point_in_time_lookup():
     h = load_top_holdings()
     assert row_on("1975-02-15", h).top1_ticker == row_on("1975-01-01", h).top1_ticker

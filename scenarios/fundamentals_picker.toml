@@ -1,0 +1,52 @@
+id = "fundamentals_picker"
+title = "Fundamentals picker: best revenue-growth + margin rank among the top 10, 2012–2026"
+description = """
+Each quarter the $500 buys the top-10 member with the best weighted rank on fiscal
+year-to-date revenue growth and margin (operating margin; pre-tax margin where no operating
+income is reported), from SEC XBRL filings filed on or before the quarter-end observation
+date (data/sources/sec_xbrl_fundamentals.csv, sp500bt/fundamentals.py).
+
+Window 2012-04-01 -> 2026-01-02: the first quarter where every top-10 member has usable XBRL
+fundamentals (Exxon's filings carry no standard revenue tag before 2012). The picker raises
+if any member lacks data (min_coverage = 10), so the universe never silently shrinks.
+The #1 and top-10 equal-weight are re-run over the same window as references.
+"""
+
+[defaults]
+group = "fundamentals"
+start = "2012-04-01"
+outputs = { events = false }
+
+[[runs]]
+id = "fundamental_{rule}"
+picker = { name = "fundamental_rank", growth_weight = 0.5, margin_weight = 0.5, max_age_days = 400 }
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+# single-factor sensitivities
+[[runs]]
+id = "growth_only_baseline_hold"
+picker = { name = "fundamental_rank", growth_weight = 1.0, margin_weight = 0.0, max_age_days = 400 }
+rule = "baseline_hold"
+
+[[runs]]
+id = "margin_only_baseline_hold"
+picker = { name = "fundamental_rank", growth_weight = 0.0, margin_weight = 1.0, max_age_days = 400 }
+rule = "baseline_hold"
+
+# references, same window
+[[runs]]
+id = "top1_{rule}_from_2012"
+picker = "top1"
+rules = ["baseline_hold", { name = "trailing_stop", stop = 0.25 }, { name = "buy_the_dip", thresholds = [0.25, 0.50] }]
+
+[[runs]]
+id = "top10_ew_baseline_hold_from_2012"
+picker = "top10_ew"
+rule = "baseline_hold"
+
+[[analyses]]
+name = "fundamental_scores"
+params = { start = "2012-04-01", growth_weight = 0.5, margin_weight = 0.5, max_age_days = 400 }
+
+[[analyses]]
+name = "pick_switches"
