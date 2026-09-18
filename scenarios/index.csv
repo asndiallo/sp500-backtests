@@ -3,3 +3,4 @@ top1_core,"#1 company x baseline hold / 25% trailing stop / buy-the-dip; fresh 1
 top10_ew,"Top-10 equal-weight vs #1 over the same window, three rules",2006-04-01..2026-01-02,2026-09-18,done,results/top10_ew/,reports/top10_ew.md
 data_sensitivity,"LOW rows -> alternate pick; confidence gates; pre-1996 picks -> index; 1996 start",1975-01-01..2026-01-02,2026-09-18,done,results/data_sensitivity/,reports/sensitivities.md
 corp_action_sensitivity,"AT&T 1984 breakup: sold at divestiture; US West written off",1975-01-01..2026-01-02,2026-09-18,done,results/corp_action_sensitivity/,reports/sensitivities.md
+random_pick_placebo,"1,000 random single-stock picks from each quarter's top-10 (baseline hold); where the #1 ranks",2006-04-01..2026-01-02,2026-09-18,done,results/random_pick_placebo/,reports/random_pick_placebo.md

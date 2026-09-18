@@ -119,3 +119,49 @@ def rule_events_chart(ctx, runs: list[str], window: str, file: str):
     values = {rule: _daily(ctx, rid) for rule, rid in by_rule.items()}
     events = {rule: ctx.sims[rid].events for rule, rid in by_rule.items()}
     charts.event_timeline(values, events, window, ctx.family.charts_dir / file)
+
+
+@analysis("random_pick_placebo")
+def random_pick_placebo(ctx, n_sims: int, base_seed: int, start: str, rule: str | dict = "baseline_hold",
+                        reference: list[dict] | None = None):
+    """Monte Carlo placebo: ``n_sims`` independent runs, each drawing one ticker per quarter
+    uniformly from the COMPLETE top-10 list. Stores one summary row per run (no lot histories)
+    and ranks each ``reference`` run (``{family, run, label}``) inside the distribution."""
+    from .engine import simulate
+    from .registry import PICKERS, RULES, build
+    from .report import summarize
+
+    rows = []
+    for i in range(n_sims):
+        seed = base_seed + i
+        res = simulate(build(PICKERS, {"name": "random_from_top10", "seed": seed}, "picker"),
+                       build(RULES, rule, "rule"), ctx.holdings, ctx.corp_actions, start=start, prices=ctx.prices)
+        s = summarize(res)
+        picks = [lot.ticker for lot in res.lots if lot.kind == "contribution"]
+        top1 = [str(ctx.holdings.loc[ctx.holdings.date <= lot.purchase_date, "top1_ticker"].iloc[-1])
+                for lot in res.lots if lot.kind == "contribution"]
+        rows.append({"sim": i, "seed": seed, "strategy_xirr": s["strategy_xirr"], "strategy_value": s["strategy_value"],
+                     "index_xirr": s["index_xirr"], "spread_vs_index": s["strategy_xirr"] - s["index_xirr"],
+                     "distinct_tickers": len(set(picks)),
+                     "share_quarters_drew_top1": sum(p == t for p, t in zip(picks, top1, strict=True)) / len(picks)})
+    sims = pd.DataFrame(rows)
+    out = ctx.family.results_dir
+    sims.to_csv(out / "sims.csv", index=False)
+    x = sims.strategy_xirr
+    stats = {"n_sims": n_sims, "window_start": start, "mean": x.mean(), "median": x.median(), "std": x.std(ddof=1),
+             "p05": x.quantile(0.05), "p25": x.quantile(0.25), "p75": x.quantile(0.75), "p95": x.quantile(0.95),
+             "min": x.min(), "max": x.max(), "index_xirr": sims.index_xirr.iloc[0],
+             "share_runs_beating_index": float((sims.spread_vs_index > 0).mean())}
+    refs = []
+    for ref in reference or []:
+        runs = pd.read_csv(ctx.family.results_dir.parent / ref["family"] / "runs.csv",
+                           float_precision="round_trip").set_index("scenario")
+        v = float(runs.loc[ref["run"], "strategy_xirr"])
+        refs.append({"label": ref["label"], "run": f"{ref['family']}/{ref['run']}", "strategy_xirr": v,
+                     "percentile_rank": float((x < v).mean() * 100), "z_score": (v - stats["mean"]) / stats["std"]})
+    pd.DataFrame([stats]).to_csv(out / "distribution_summary.csv", index=False)
+    pd.DataFrame(refs).to_csv(out / "reference_ranks.csv", index=False)
+    ctx.family.charts_dir.mkdir(parents=True, exist_ok=True)
+    charts.placebo_histogram(sims, stats, refs, ctx.family.charts_dir / "xirr_distribution.png")
+    print(f"  placebo: mean {stats['mean']:.2%} median {stats['median']:.2%} p5 {stats['p05']:.2%} "
+          f"p95 {stats['p95']:.2%}; " + "; ".join(f"{r['label']} at P{r['percentile_rank']:.0f}" for r in refs))

@@ -153,3 +153,28 @@ def event_timeline(values: dict[str, pd.DataFrame], events: dict[str, pd.DataFra
     axb.grid(alpha=0.3)
     axb.legend(fontsize=8)
     _save(fig, path)
+
+
+def placebo_histogram(sims: pd.DataFrame, stats: dict, refs: list[dict], path: Path):
+    """Distribution of random-pick XIRRs with the real strategies and the index marked."""
+    fig, ax = plt.subplots(figsize=(11, 5.5))
+    ax.hist(sims.strategy_xirr, bins=40, color="#bbbbbb", edgecolor="white",
+            label=f"{stats['n_sims']} random-pick runs")
+    for q, ls in (("p05", ":"), ("p95", ":"), ("median", "-")):
+        ax.axvline(stats[q], color="#777777", ls=ls, lw=1)
+        ax.text(stats[q], ax.get_ylim()[1] * 0.97, q.upper().replace("MEDIAN", "median"), rotation=90,
+                va="top", ha="right", fontsize=8, color="#555555")
+    ax.axvline(stats["index_xirr"], color=COLORS["index"], ls="--", lw=1.8,
+               label=f"index leg {stats['index_xirr']:.2%}")
+    ref_colors = {"#1": COLORS["baseline_hold"], "Top-10": COLORS["top10"]}
+    for r in refs:
+        c = next((v for k, v in ref_colors.items() if r["label"].startswith(k)), "#d62728")
+        ax.axvline(r["strategy_xirr"], color=c, lw=2.4,
+                   label=f"{r['label']}: {r['strategy_xirr']:.2%} (percentile {r['percentile_rank']:.0f})")
+    ax.xaxis.set_major_formatter(mtick.PercentFormatter(1.0))
+    ax.set_xlabel("stock-leg XIRR, 2006-04-01 → 2026-01-02")
+    ax.set_ylabel("runs")
+    ax.set_title("Placebo: one random top-10 stock per quarter vs always buying the #1 (baseline hold)")
+    ax.legend(fontsize=8, loc="upper right")
+    ax.grid(alpha=0.3)
+    _save(fig, path)

@@ -33,6 +33,7 @@ Every scenario ever run is listed in [`scenarios/index.csv`](scenarios/index.csv
 | `top1_core` | #1 company × baseline hold / 25% trailing stop / buy-the-dip, 1975–2026 and fresh 1995–2026 runs; reconciliation; confidence attribution | [reports/top1_core.md](reports/top1_core.md) |
 | `top10_ew` | Top-10 equal-weight vs #1 over 2006–2026 | [reports/top10_ew.md](reports/top10_ew.md) |
 | `data_sensitivity`, `corp_action_sensitivity` | Confidence grades, pre-1996 data, AT&T 1984 breakup treatment | [reports/sensitivities.md](reports/sensitivities.md) |
+| `random_pick_placebo` | 1,000 random top-10 picks per quarter vs the #1 (2006–2026): the #1 ranks at the 80th percentile | [reports/random_pick_placebo.md](reports/random_pick_placebo.md) |
 | — | Phase 1 table corrections, known gaps, data caveats | [reports/methodology.md](reports/methodology.md) |
 
 ## Reproduce

@@ -1,0 +1,21 @@
+id = "random_pick_placebo"
+title = "Random-pick placebo: is the #1 special, or is any mega-cap the same?"
+description = """
+1,000 independent simulations. Each quarter from 2006-04-01 (first COMPLETE top-10 list)
+one ticker is drawn uniformly at random from that quarter's top-10 list (the #1 included)
+and held with the baseline-hold rule, $500/quarter, valued 2026-01-02. Only summary
+statistics per run are stored. The real #1 run and the top-10 equal-weight run are ranked
+inside the resulting XIRR distribution.
+"""
+
+[[analyses]]
+name = "random_pick_placebo"
+[analyses.params]
+n_sims = 1000
+base_seed = 20260918          # run i uses seed base_seed + i (reproducible)
+start = "2006-04-01"          # first quarter with a COMPLETE top-10 list
+rule = "baseline_hold"
+reference = [
+    { family = "top10_ew", run = "top1_baseline_hold_from_2006", label = "#1 picker (baseline hold)" },
+    { family = "top10_ew", run = "top10_ew_baseline_hold", label = "Top-10 equal-weight (baseline hold)" },
+]

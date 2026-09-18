@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+import numpy as np
 import pandas as pd
 
 from .config import INDEX_TICKER
@@ -71,6 +72,21 @@ def _index_before(before: str, fallback: str = INDEX_TICKER):
 @register(PICKERS, "top10_ew")
 def _top10():
     return top10_picker
+
+
+@register(PICKERS, "random_from_top10")
+def _random_top10(seed: int):
+    """Placebo: each quarter one ticker drawn uniformly from that quarter's COMPLETE
+    top-10 list (the #1 itself included). One seeded generator per run."""
+    rng = np.random.default_rng(seed)
+
+    def picker(date, holdings):
+        row = row_on(date, holdings)
+        if row["top10_status"] != "COMPLETE":
+            raise ValueError(f"top-10 list for {row['date'].date()} is {row['top10_status']}")
+        tickers = row["top10_tickers"].split(",")
+        return row, [(tickers[int(rng.integers(len(tickers)))], 1.0)]
+    return picker
 
 
 # ------------------------------------------------------------------ rules
